@@ -7,7 +7,7 @@ import (
 
 type dependency struct {
     Location string `json:"loc"`
-    Name string `json:"path"`
+    Path string `json:"path"`
     Type string `json:"type"`
     Reference string `json:"reference"`
 }

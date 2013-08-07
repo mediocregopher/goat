@@ -86,8 +86,8 @@ func main() {
         } else if err != nil {
             fatal(err)
         } else {
-            if dep.Name == "" {
-                dep.Name = dep.Location
+            if dep.Path == "" {
+                dep.Path = dep.Location
             }
 
             fun,ok := typemap[dep.Type]
