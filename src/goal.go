@@ -71,7 +71,7 @@ func main() {
     if err != nil {
         fatal(err)
     }
-    
+
     gfh,err := os.Open(goalfile)
     defer gfh.Close()
     if err != nil {
