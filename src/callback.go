@@ -14,7 +14,7 @@ var typemap = map[string]typefunc{
 
 func goget(projrootlib string, dep *dependency) error {
     fmt.Println("go","get",dep.Location)
-    return <- pipedCmd("go","get",dep.Location)
+    return pipedCmd("go","get",dep.Location)
 }
 
 //func git(projrootlib string, dep *dependency) error {
