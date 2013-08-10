@@ -11,8 +11,8 @@ import (
 )
 
 // Returns the directory name of the parent that contains the
-// Goalfile
-func findGoalfile(dir string) (string,error) {
+// Goatfile
+func findGoatfile(dir string) (string,error) {
     dirh,err := os.Open(dir)
     defer dirh.Close()
     if err != nil {
@@ -27,31 +27,31 @@ func findGoalfile(dir string) (string,error) {
     for _,n := range dirnodes {
         if n.IsDir() {
             continue
-        } else if n.Name() == "Goalfile" {
+        } else if n.Name() == GOATFILE {
             return dir,nil
         }
     }
 
     parent := filepath.Dir(dir)
     if dir == parent {
-        return "",errors.New("Goalfile not found")
+        return "",errors.New("Goatfile not found")
     }
 
-    return findGoalfile(parent)
+    return findGoatfile(parent)
 }
 
-func setupGoalEnv() (*GoalEnv,error) {
+func setupGoatEnv() (*GoatEnv,error) {
     cwd,err := os.Getwd()
     if err != nil {
         return nil,err
     }
 
-    projroot,err := findGoalfile(cwd)
+    projroot,err := findGoatfile(cwd)
     if err != nil {
         return nil,err
     }
 
-    goalfile := filepath.Join(projroot,"Goalfile")
+    goatfile := filepath.Join(projroot,GOATFILE)
     projrootlib := filepath.Join(projroot,"lib")
     if _, err := os.Stat(projrootlib); os.IsNotExist(err) {
         err = os.Mkdir(projrootlib,0755)
@@ -66,9 +66,9 @@ func setupGoalEnv() (*GoalEnv,error) {
         return nil,err
     }
 
-    return &GoalEnv{ ProjRoot: projroot,
+    return &GoatEnv{ ProjRoot: projroot,
                      ProjRootLib: projrootlib,
-                     Goalfile: goalfile },nil
+                     Goatfile: goatfile },nil
 }
 
 func fatal(err error) {
@@ -78,12 +78,12 @@ func fatal(err error) {
 
 func main() {
 
-    genv,err := setupGoalEnv()
+    genv,err := setupGoatEnv()
     if err != nil {
         fatal(err)
     }
 
-    gfh,err := os.Open(genv.Goalfile)
+    gfh,err := os.Open(genv.Goatfile)
     defer gfh.Close()
     if err != nil {
         fatal(err)

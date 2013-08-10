@@ -1,5 +1,7 @@
 package main
 
+var GOATFILE = "Goatfile"
+
 type Dependency struct {
     Location string `json:"loc"`
     Path string `json:"path"`
@@ -7,8 +9,8 @@ type Dependency struct {
     Reference string `json:"reference"`
 }
 
-type GoalEnv struct {
+type GoatEnv struct {
     ProjRoot string
     ProjRootLib string
-    Goalfile string
+    Goatfile string
 }

@@ -6,7 +6,7 @@ import (
     "path/filepath"
 )
 
-type typefunc func(*GoalEnv,*Dependency)error
+type typefunc func(*GoatEnv,*Dependency)error
 
 var typemap = map[string]typefunc{
     "": goget,
@@ -14,12 +14,12 @@ var typemap = map[string]typefunc{
     "git": git,
 }
 
-func goget(genv *GoalEnv, dep *Dependency) error {
+func goget(genv *GoatEnv, dep *Dependency) error {
     fmt.Println("go","get",dep.Location)
     return pipedCmd("go","get",dep.Location)
 }
 
-func git(genv *GoalEnv, dep *Dependency) error {
+func git(genv *GoatEnv, dep *Dependency) error {
     localloc := filepath.Join(genv.ProjRootLib,dep.Path)
 
     fmt.Println("git","clone",dep.Location,localloc)
