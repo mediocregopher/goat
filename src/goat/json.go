@@ -1,11 +1,13 @@
-package main
+package goat
 
 import (
     "encoding/json"
     "bufio"
 )
 
-func readDependency(buf *bufio.Reader) (*Dependency,error) {
+// ReadDependency reads in a dependency json object from a buffered reader and
+// returns it
+func ReadDependency(buf *bufio.Reader) (*Dependency,error) {
     b,err := buf.ReadBytes('}')
     if err != nil {
         return nil,err

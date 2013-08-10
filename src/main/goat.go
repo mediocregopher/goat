@@ -8,6 +8,7 @@ import (
     "io"
     "errors"
     "syscall"
+    . "goat"
 )
 
 // Returns the directory name of the parent that contains the
@@ -91,7 +92,7 @@ func main() {
 
     gfhbuf := bufio.NewReader(gfh)
     for {
-        dep,err := readDependency(gfhbuf)
+        dep,err := ReadDependency(gfhbuf)
         if err == io.EOF {
             break
         } else if err != nil {
@@ -101,7 +102,7 @@ func main() {
                 dep.Path = dep.Location
             }
 
-            fun,ok := typemap[dep.Type]
+            fun,ok := TypeMap[dep.Type]
             if !ok {
                 fatal(errors.New("Unknown dependency type: "+dep.Type))
             }
@@ -112,5 +113,5 @@ func main() {
         }
     }
 
-    //fmt.Println( <- pipedCmd("go",os.Args[1:]...) )
+    PipedCmd("/bin/go",os.Args[1:]...)
 }
