@@ -40,21 +40,15 @@ func findGoalfile(dir string) (string,error) {
     return findGoalfile(parent)
 }
 
-func fatal(err error) {
-    fmt.Println(err)
-    os.Exit(1)
-}
-
-func main() {
-
+func setupGoalEnv() (*GoalEnv,error) {
     cwd,err := os.Getwd()
     if err != nil {
-        fatal(err)
+        return nil,err
     }
 
     projroot,err := findGoalfile(cwd)
     if err != nil {
-        fatal(err)
+        return nil,err
     }
 
     goalfile := filepath.Join(projroot,"Goalfile")
@@ -62,17 +56,34 @@ func main() {
     if _, err := os.Stat(projrootlib); os.IsNotExist(err) {
         err = os.Mkdir(projrootlib,0755)
         if err != nil {
-            fatal(err)
+            return nil,err
         }
     }
 
     gopath,_ := syscall.Getenv("GOPATH")
     err = syscall.Setenv("GOPATH",projrootlib+":"+projroot+":"+gopath)
     if err != nil {
+        return nil,err
+    }
+
+    return &GoalEnv{ ProjRoot: projroot,
+                     ProjRootLib: projrootlib,
+                     Goalfile: goalfile },nil
+}
+
+func fatal(err error) {
+    fmt.Println(err)
+    os.Exit(1)
+}
+
+func main() {
+
+    genv,err := setupGoalEnv()
+    if err != nil {
         fatal(err)
     }
 
-    gfh,err := os.Open(goalfile)
+    gfh,err := os.Open(genv.Goalfile)
     defer gfh.Close()
     if err != nil {
         fatal(err)
@@ -94,7 +105,7 @@ func main() {
             if !ok {
                 fatal(errors.New("Unknown dependency type: "+dep.Type))
             }
-            err = fun(projrootlib,dep)
+            err = fun(genv,dep)
             if err != nil {
                 fatal(err)
             }

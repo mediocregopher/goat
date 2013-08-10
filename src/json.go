@@ -5,20 +5,13 @@ import (
     "bufio"
 )
 
-type dependency struct {
-    Location string `json:"loc"`
-    Path string `json:"path"`
-    Type string `json:"type"`
-    Reference string `json:"reference"`
-}
-
-func readDependency(buf *bufio.Reader) (*dependency,error) {
+func readDependency(buf *bufio.Reader) (*Dependency,error) {
     b,err := buf.ReadBytes('}')
     if err != nil {
         return nil,err
     }
 
-    var dep dependency
+    var dep Dependency
     err = json.Unmarshal(b,&dep)
     return &dep,err
 }
