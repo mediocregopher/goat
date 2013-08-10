@@ -3,7 +3,8 @@ package main
 import (
     "os"
     "fmt"
-    . "goat"
+    "goat"
+    "goat/env"
 )
 
 func fatal(err error) {
@@ -18,15 +19,15 @@ func main() {
         fatal(err)
     }
 
-    projroot,err := FindGoatfile(cwd)
+    projroot,err := env.FindGoatfile(cwd)
     if err != nil {
         fatal(err)
     }
 
-    genv := SetupGoatEnv(projroot)
-    if err = EnvPrependProj(genv); err != nil {
+    genv := env.SetupGoatEnv(projroot)
+    if err = env.EnvPrependProj(genv); err != nil {
         fatal(err)
     }
 
-    PipedCmd("/bin/go",os.Args[1:]...)
+    goat.PipedCmd("/bin/go",os.Args[1:]...)
 }

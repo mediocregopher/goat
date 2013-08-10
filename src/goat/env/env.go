@@ -1,10 +1,11 @@
-package goat
+package env
 
 import (
     "syscall"
     "path/filepath"
     "errors"
     "os"
+    . "goat"
 )
 
 // FindGoatFile returns the directory name of the parent that contains the
