@@ -16,6 +16,13 @@ func FetchDependencies(genv *GoatEnv) error {
         return err
     }
 
+    if _, err := os.Stat(genv.ProjRootLib); os.IsNotExist(err) {
+        err = os.Mkdir(genv.ProjRootLib,0755)
+        if err != nil {
+            return err
+        }
+    }
+
     gfhbuf := bufio.NewReader(gfh)
     for {
         dep,err := ReadDependency(gfhbuf)
