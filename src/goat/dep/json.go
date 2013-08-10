@@ -1,8 +1,9 @@
-package goat
+package dep
 
 import (
     "encoding/json"
     "bufio"
+    . "goat"
 )
 
 // ReadDependency reads in a dependency json object from a buffered reader and

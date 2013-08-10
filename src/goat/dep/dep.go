@@ -1,4 +1,4 @@
-package goat
+package dep
 
 import (
     "fmt"
@@ -7,6 +7,7 @@ import (
     "bufio"
     "path/filepath"
     "errors"
+    . "goat"
 )
 
 func FetchDependencies(genv *GoatEnv) error {
