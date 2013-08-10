@@ -3,12 +3,48 @@ package goat
 import (
     "fmt"
     "os"
+    "io"
+    "bufio"
     "path/filepath"
+    "errors"
 )
+
+func FetchDependencies(genv *GoatEnv) error {
+    gfh,err := os.Open(genv.Goatfile)
+    defer gfh.Close()
+    if err != nil {
+        return err
+    }
+
+    gfhbuf := bufio.NewReader(gfh)
+    for {
+        dep,err := ReadDependency(gfhbuf)
+        if err == io.EOF {
+            break
+        } else if err != nil {
+            return err
+        } else {
+            if dep.Path == "" {
+                dep.Path = dep.Location
+            }
+
+            fun,ok := typemap[dep.Type]
+            if !ok {
+                return errors.New("Unknown dependency type: "+dep.Type)
+            }
+            err = fun(genv,dep)
+            if err != nil {
+                return err
+            }
+        }
+    }
+
+    return nil
+}
 
 type typefunc func(*GoatEnv,*Dependency)error
 
-var TypeMap = map[string]typefunc{
+var typemap = map[string]typefunc{
     "": goget,
     "get": goget,
     "git": git,
