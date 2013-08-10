@@ -3,8 +3,8 @@ package main
 import (
     "os"
     "fmt"
-    "goat"
     "goat/env"
+    "goat/exec"
 )
 
 func fatal(err error) {
@@ -29,5 +29,5 @@ func main() {
         fatal(err)
     }
 
-    goat.PipedCmd("/bin/go",os.Args[1:]...)
+    exec.PipedCmd("/bin/go",os.Args[1:]...)
 }
