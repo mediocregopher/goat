@@ -63,6 +63,14 @@ func SetupGoatEnv(projroot string) *GoatEnv {
                      Goatfile: goatfile }
 }
 
+// ChrootEnv changes the root directories of a given environment. Useful if you
+// want to make the dependencies download somewhere else
+func ChrootEnv(genv *GoatEnv, newroot string) {
+    newrootlib := filepath.Join(newroot,"lib")
+    genv.ProjRoot = newroot
+    genv.ProjRootLib = newrootlib
+}
+
 func envPrepend(dir string) error {
     gopath,_ := syscall.Getenv("GOPATH")
     return syscall.Setenv("GOPATH",dir+":"+gopath)

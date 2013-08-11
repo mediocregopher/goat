@@ -9,6 +9,7 @@ import (
     "errors"
     . "goat"
     "goat/exec"
+    "goat/env"
 )
 
 func FetchDependencies(genv *GoatEnv) error {
@@ -45,6 +46,20 @@ func FetchDependencies(genv *GoatEnv) error {
             if err != nil {
                 return err
             }
+
+            depprojroot := filepath.Join(genv.ProjRootLib,dep.Path)
+            issubproj,err := env.IsProjRoot(depprojroot)
+            if err != nil {
+                return err
+            } else if issubproj {
+                depgenv := env.SetupGoatEnv(depprojroot)
+                env.ChrootEnv(depgenv,genv.ProjRoot)
+                err = FetchDependencies(depgenv)
+                if err != nil {
+                    return err
+                }
+            }
+
         }
     }
 
