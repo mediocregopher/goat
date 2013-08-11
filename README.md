@@ -65,3 +65,9 @@ make
 ```
 
 The binaries will be found in the `bin` directory.
+
+# Usage
+
+See the [tutorial](/docs/tut.md) for a basic use case for goat. After that
+check out the [Goatfile](/docs/goatfile.md) for more details on what kind of
+features goat has for dependency management.
