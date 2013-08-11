@@ -47,7 +47,7 @@ func FetchDependencies(genv *GoatEnv) error {
                 return err
             }
 
-            depprojroot := filepath.Join(genv.ProjRootLib,dep.Path)
+            depprojroot := filepath.Join(genv.ProjRootLib,"src",dep.Path)
             issubproj,err := env.IsProjRoot(depprojroot)
             if err != nil {
                 return err
@@ -80,7 +80,7 @@ func goget(genv *GoatEnv, dep *Dependency) error {
 }
 
 func git(genv *GoatEnv, dep *Dependency) error {
-    localloc := filepath.Join(genv.ProjRootLib,dep.Path)
+    localloc := filepath.Join(genv.ProjRootLib,"src",dep.Path)
 
     fmt.Println("git","clone",dep.Location,localloc)
     err := exec.PipedCmd("git","clone",dep.Location,localloc)

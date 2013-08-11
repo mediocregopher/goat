@@ -31,10 +31,10 @@ func FindGoatfile(dir string) (string,error) {
 // root for a goat project (aka, whether or not it has a goat file)
 func IsProjRoot(dir string) (bool,error) {
     dirh,err := os.Open(dir)
-    defer dirh.Close()
     if err != nil {
         return false,err
     }
+    defer dirh.Close()
 
     dirnodes,err := dirh.Readdir(-1)
     if err != nil {
