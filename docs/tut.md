@@ -67,7 +67,7 @@ This is the equivalent of having goat do a
 write-up on `Goatfile` syntax and how to use it see the
 [Goatfile](/docs/goatfile.md) documentation.
 
-To actually download the dependency do:
+To actually download the dependency do (you'll need mercurial installed):
 
 ```bash
 > cd /tmp/goatproject #if you hadn't already
@@ -77,6 +77,9 @@ To actually download the dependency do:
 This should fetch the dependency and put it in the `lib/` directory in your
 project. You shouldn't check this directory into your version control (if
 you're using any), it's just a utility for goat.
+
+If in the future you change the Goatfile you can call `goat deps` again and it
+will re-setup your `lib` directory with the changes.
 
 ## Using the dependency
 
