@@ -67,6 +67,11 @@ func main() {
 	case "ghelp":
 		printGhelp()
 	default:
-		exec.PipedCmd("/bin/go", args...)
+		newargs := make([]string, len(args)+1)
+		// shift all args over one in the new array
+		copy(newargs[1:], args)
+		// the command to run is the first argument to env
+		newargs[0] = "go"
+		exec.PipedCmd("/usr/bin/env", newargs...)
 	}
 }
