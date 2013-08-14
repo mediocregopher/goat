@@ -86,7 +86,7 @@ func EnvPrependProj(genv *GoatEnv) error {
 	return envPrepend(genv.ProjRootLib)
 }
 
-func ActualGo() (string,bool) {
-	bin,ok := syscall.Getenv("GOAT_ACTUALGO")
-	return bin,ok
+func ActualGo() (string, bool) {
+	bin, ok := syscall.Getenv("GOAT_ACTUALGO")
+	return bin, ok
 }

@@ -1,13 +1,13 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	. "goat/common"
 	"goat/dep"
 	"goat/env"
 	"goat/exec"
 	"os"
-	"errors"
 )
 
 func fatal(err error) {
@@ -17,7 +17,7 @@ func fatal(err error) {
 
 func printGhelp() {
 	fmt.Printf(
-`Goat is a command-line wrapper for go which handles dependency management in a
+		`Goat is a command-line wrapper for go which handles dependency management in a
 sane way. Check the goat docs at github.com/mediocregopher/goat for a more
 in-depth overview.
 
@@ -53,7 +53,6 @@ func main() {
 		}
 	}
 
-
 	args := os.Args[1:]
 	if len(args) < 1 {
 		printGhelp()
@@ -67,12 +66,12 @@ func main() {
 				fatal(err)
 			}
 		} else {
-			fatal(errors.New("Goatfile not found on current path"))	
+			fatal(errors.New("Goatfile not found on current path"))
 		}
 	case "ghelp":
 		printGhelp()
 	default:
-		if actualgo,ok := env.ActualGo(); ok {
+		if actualgo, ok := env.ActualGo(); ok {
 			exec.PipedCmd(actualgo, args...)
 		} else {
 			newargs := make([]string, len(args)+1)
