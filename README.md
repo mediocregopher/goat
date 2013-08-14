@@ -45,8 +45,9 @@ There are two problems that goat aims to solve:
 
 To use goat you can either get a pre-compiled binary or build it yourself. Once
 you get the binary I recommend renaming it to `go` and putting it on your `PATH`
-so that it gets used whenever you use the `go` utility. Don't worry, unless you
-are in a directory tree with a `Goatfile` or use one of goat's like two commands
+so that it gets used whenever you use the `go` utility (See this
+[caveat](/docs/special.md#goat_actualgo) though). Don't worry, unless you are in
+a directory tree with a `Goatfile` or use one of goat's like two commands
 nothing will be different.
 
 ## Pre-built
