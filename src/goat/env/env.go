@@ -2,7 +2,7 @@ package env
 
 import (
 	"errors"
-	. "goat"
+	. "goat/common"
 	"os"
 	"path/filepath"
 	"syscall"

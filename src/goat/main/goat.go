@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"goat"
+	. "goat/common"
 	"goat/dep"
 	"goat/env"
 	"goat/exec"
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	projroot, err := env.FindGoatfile(cwd)
-	var genv *goat.GoatEnv
+	var genv *GoatEnv
 	if err == nil {
 		genv = env.SetupGoatEnv(projroot)
 		if err = env.EnvPrependProj(genv); err != nil {

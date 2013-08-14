@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	. "goat"
+	. "goat/common"
 	"goat/env"
 	"goat/exec"
 	"io"

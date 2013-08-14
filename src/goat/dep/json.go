@@ -3,7 +3,7 @@ package dep
 import (
 	"bufio"
 	"encoding/json"
-	. "goat"
+	. "goat/common"
 )
 
 // ReadDependency reads in a dependency json object from a buffered reader and

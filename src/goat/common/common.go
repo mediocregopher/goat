@@ -1,4 +1,4 @@
-package goat
+package common
 
 var GOATFILE = "Goatfile"
 
