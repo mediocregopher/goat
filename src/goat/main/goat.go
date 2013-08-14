@@ -7,6 +7,7 @@ import (
 	"goat/env"
 	"goat/exec"
 	"os"
+	"errors"
 )
 
 func fatal(err error) {
@@ -60,18 +61,24 @@ func main() {
 
 	switch args[0] {
 	case "deps":
-		err := dep.FetchDependencies(genv)
-		if err != nil {
-			fatal(err)
+		if genv != nil {
+			err := dep.FetchDependencies(genv)
+			if err != nil {
+				fatal(err)
+			}
+		} else {
+			fatal(errors.New("Goatfile not found on current path"))	
 		}
 	case "ghelp":
 		printGhelp()
 	default:
-		newargs := make([]string, len(args)+1)
-		// shift all args over one in the new array
-		copy(newargs[1:], args)
-		// the command to run is the first argument to env
-		newargs[0] = "go"
-		exec.PipedCmd("/usr/bin/env", newargs...)
+		if actualgo,ok := env.ActualGo(); ok {
+			exec.PipedCmd(actualgo, args...)
+		} else {
+			newargs := make([]string, len(args)+1)
+			copy(newargs[1:], args)
+			newargs[0] = "go"
+			exec.PipedCmd("/usr/bin/env", newargs...)
+		}
 	}
 }
