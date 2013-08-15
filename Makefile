@@ -1,7 +1,21 @@
-GOBIN=/bin/go
+local: bin
+	GOPATH=$(shell pwd):$(GOPATH) go build -o bin/goat src/goat/main/goat.go
 
-all: build
+release: bin rel
+	@echo -n "What's the name/version number of this release?: "; \
+	read version; \
+	mkdir bin/goat-$$version; \
+	for platform in darwin freebsd linux windows; do \
+		for arch in 386 amd64; do \
+			echo $$platform $$arch; \
+			GOPATH=$(shell pwd):$(GOPATH) GOOS=$$platform GOARCH=$$arch go build -o bin/goat-$$version/goat_"$$platform"_"$$arch" src/goat/main/goat.go; \
+		done; \
+	done; \
+	echo "Tar-ing into rel/goat-$$version.tar.gz"; \
+	tar cvzf rel/goat-$$version.tar.gz bin/goat-$$version
 
-build:
-	GOPATH=$(shell pwd):$(GOPATH) GOOS=linux GOARCH=386 $(GOBIN) build -o bin/goat_linux_386 src/goat/main/goat.go
-	GOPATH=$(shell pwd):$(GOPATH) GOOS=linux GOARCH=amd64 $(GOBIN) build -o bin/goat_linux_amd64 src/goat/main/goat.go
+rel:
+	mkdir rel
+
+bin:
+	mkdir bin
