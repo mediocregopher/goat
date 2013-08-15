@@ -35,15 +35,15 @@ There are four fields that can be used to define a dependency:
          fetch your project. This will be passed into whatever dependency
          fetcher you are using (go get, git, mercurial, etc...).
 
-* `type`: By default this field is `goget`, but currently `git` is also
+* `type`: By default this field is `goget`, but currently `git` and `hg` are also
           supported. This tells goat how to fetch the dependency. For example if
           `type` is set to `goget` then `go get <path>` is used, while if it's
           `git` then `git clone <path>` will be used.
 
 * `reference`: The option is only valid for `type`s that have some kind of
                version reference system (for example `git` does, `goget`
-               doesn't). By default this is set to `master` for git, but it can
-               be set to another branch name, a tag, or a commit hash.
+               doesn't). Here are the defaults for the supported types:
+               git: `master`, hg: `tip`
 
 * `path`: The actual directory structure the dependency will be put into inside
           `lib` folder. By default this is set to whatever `path` is set to,
