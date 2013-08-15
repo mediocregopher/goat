@@ -17,19 +17,21 @@ func fatal(err error) {
 
 func printGhelp() {
 	fmt.Printf(
-		`Goat is a command-line wrapper for go which handles dependency management in a
-sane way. Check the goat docs at github.com/mediocregopher/goat for a more
-in-depth overview.
+		`Goat is a command-line wrapper for go which handles dependency
+management in a sane way. Check the goat docs at github.com/mediocregopher/goat
+for a more in-depth overview.
 
 Usage:
 
-	%s command [arguments]
+    %s command [arguments]
 
 The commands are:
 
-	deps    Read the Goatfile for this project and set up dependencies in the
-	lib folder. Recursively download dependencies wherever a Goatfile is
-	encountered ghelp   Show this dialog
+    deps    Read the Goatfile for this project and set up dependencies in the
+            lib folder. Recursively download dependencies wherever a Goatfile is
+            encountered
+
+    ghelp   Show this dialog
 
 All other commands are passed through to the go binary on your system. Try '%s
 help' for its available commands
