@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	. "goat/common"
-	"goat/dep"
 	"goat/env"
 	"goat/exec"
 	"os"
@@ -65,7 +64,7 @@ func main() {
 	switch args[0] {
 	case "deps":
 		if genv != nil {
-			err := dep.FetchDependencies(genv)
+			err := env.FetchDependencies(genv)
 			if err != nil {
 				fatal(err)
 			}
