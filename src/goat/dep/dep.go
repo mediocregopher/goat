@@ -41,10 +41,7 @@ func FetchDependencies(genv *GoatEnv) error {
 		}
 
 		depprojroot := filepath.Join(genv.ProjRootLib, "src", dep.Path)
-		issubproj, err := env.IsProjRoot(depprojroot)
-		if err != nil {
-			return err
-		} else if issubproj {
+		if env.IsProjRoot(depprojroot) {
 			depgenv,err := env.SetupGoatEnv(depprojroot)
 			if err != nil {
 				return err
