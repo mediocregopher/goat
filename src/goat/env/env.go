@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
-	"encoding/json"
 	"io/ioutil"
 )
 
@@ -51,7 +50,7 @@ func SetupGoatEnv(projroot string) (*GoatEnv,error) {
 		return nil,err
 	}
 
-	err = json.Unmarshal(genvraw,&genv)
+	err = UnmarshalGoat(genvraw,&genv)
 	return &genv,err
 }
 
