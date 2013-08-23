@@ -49,8 +49,10 @@ func main() {
 	projroot, err := env.FindGoatfile(cwd)
 	var genv *GoatEnv
 	if err == nil {
-		genv = env.SetupGoatEnv(projroot)
-		if err = env.EnvPrependProj(genv); err != nil {
+		genv,err = env.SetupGoatEnv(projroot)
+		if err != nil {
+			fatal(err)
+		} else if err = env.EnvPrependProj(genv); err != nil {
 			fatal(err)
 		}
 	}

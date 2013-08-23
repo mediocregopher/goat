@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
+	"encoding/json"
+	"io/ioutil"
 )
 
 // FindGoatFile returns the directory name of the parent that contains the
@@ -29,6 +31,9 @@ func FindGoatfile(dir string) (string, error) {
 
 // IsProjRoot returns whether or not a particular directory is the project
 // root for a goat project (aka, whether or not it has a goat file)
+//
+// BUG(mediocregopher): I was stupid when I wrote this, why doesn't it just
+// check for a freaking file called dir/Goatfile? Herp
 func IsProjRoot(dir string) (bool, error) {
 	dirh, err := os.Open(dir)
 	if err != nil {
@@ -53,14 +58,22 @@ func IsProjRoot(dir string) (bool, error) {
 }
 
 // NewGoatEnv returns a new GoatEnv struct based on the directory passed in
-func SetupGoatEnv(projroot string) *GoatEnv {
+func SetupGoatEnv(projroot string) (*GoatEnv,error) {
 
 	goatfile := filepath.Join(projroot, GOATFILE)
 	projrootlib := filepath.Join(projroot, "lib")
 
-	return &GoatEnv{ProjRoot: projroot,
+	genv := GoatEnv{ProjRoot: projroot,
 		ProjRootLib: projrootlib,
-		Goatfile:    goatfile}
+		Goatfile: goatfile}
+
+	genvraw,err := ioutil.ReadFile(goatfile)
+	if err != nil {
+		return nil,err
+	}
+
+	err = json.Unmarshal(genvraw,&genv)
+	return &genv,err
 }
 
 // ChrootEnv changes the root directories of a given environment. Useful if you

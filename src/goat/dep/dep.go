@@ -1,65 +1,59 @@
 package dep
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	. "goat/common"
 	"goat/env"
 	"goat/exec"
-	"io"
 	"os"
 	"path/filepath"
 )
 
+// FetchDependencies goes and retrieves the dependencies for a given GoatEnv. If
+// the dependencies have any Goatfile's in them, this will fetch the
+// dependencies listed therein as well. All dependencies are placed in the root
+// project's lib directory, INCLUDING any sub-dependencies. This is done on
+// purpose!
 func FetchDependencies(genv *GoatEnv) error {
-	gfh, err := os.Open(genv.Goatfile)
-	defer gfh.Close()
-	if err != nil {
-		return err
-	}
+	var err error
 
-	if _, err := os.Stat(genv.ProjRootLib); os.IsNotExist(err) {
+	if _, err = os.Stat(genv.ProjRootLib); os.IsNotExist(err) {
 		err = os.Mkdir(genv.ProjRootLib, 0755)
 		if err != nil {
 			return err
 		}
 	}
 
-	gfhbuf := bufio.NewReader(gfh)
-	for {
-		dep, err := ReadDependency(gfhbuf)
-		if err == io.EOF {
-			break
-		} else if err != nil {
+	for i := range genv.Dependencies {
+		dep := &genv.Dependencies[i]
+		if dep.Path == "" {
+			dep.Path = dep.Location
+		}
+
+		fun, ok := typemap[dep.Type]
+		if !ok {
+			return errors.New("Unknown dependency type: " + dep.Type)
+		}
+		err = fun(genv, dep)
+		if err != nil {
 			return err
-		} else {
-			if dep.Path == "" {
-				dep.Path = dep.Location
-			}
+		}
 
-			fun, ok := typemap[dep.Type]
-			if !ok {
-				return errors.New("Unknown dependency type: " + dep.Type)
-			}
-			err = fun(genv, dep)
+		depprojroot := filepath.Join(genv.ProjRootLib, "src", dep.Path)
+		issubproj, err := env.IsProjRoot(depprojroot)
+		if err != nil {
+			return err
+		} else if issubproj {
+			depgenv,err := env.SetupGoatEnv(depprojroot)
 			if err != nil {
 				return err
 			}
-
-			depprojroot := filepath.Join(genv.ProjRootLib, "src", dep.Path)
-			issubproj, err := env.IsProjRoot(depprojroot)
+			env.ChrootEnv(depgenv, genv.ProjRoot)
+			err = FetchDependencies(depgenv)
 			if err != nil {
 				return err
-			} else if issubproj {
-				depgenv := env.SetupGoatEnv(depprojroot)
-				env.ChrootEnv(depgenv, genv.ProjRoot)
-				err = FetchDependencies(depgenv)
-				if err != nil {
-					return err
-				}
 			}
-
 		}
 	}
 
