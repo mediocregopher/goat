@@ -3,10 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	. "goat/common"
-	"goat/dep"
-	"goat/env"
-	"goat/exec"
+	. "github.com/mediocregopher/goat/src/goat/common"
+	"github.com/mediocregopher/goat/src/goat/env"
+	"github.com/mediocregopher/goat/src/goat/exec"
 	"os"
 )
 
@@ -49,8 +48,10 @@ func main() {
 	projroot, err := env.FindGoatfile(cwd)
 	var genv *GoatEnv
 	if err == nil {
-		genv = env.SetupGoatEnv(projroot)
-		if err = env.EnvPrependProj(genv); err != nil {
+		genv, err = env.SetupGoatEnv(projroot)
+		if err != nil {
+			fatal(err)
+		} else if err = env.EnvPrependProj(genv); err != nil {
 			fatal(err)
 		}
 	}
@@ -60,10 +61,14 @@ func main() {
 		printGhelp()
 	}
 
+	if err = env.Setup(genv); err != nil {
+		fatal(err)
+	}
+
 	switch args[0] {
 	case "deps":
 		if genv != nil {
-			err := dep.FetchDependencies(genv)
+			err := env.FetchDependencies(genv)
 			if err != nil {
 				fatal(err)
 			}
