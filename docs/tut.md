@@ -37,11 +37,16 @@ mine in `/tmp`:
 ```
 
 Now we need to actually make this directory a goat project. To do this all that
-goat needs is for a `Goatfile` to exist in the root:
+goat needs is for a `Goatfile` to exist in the root, and for it to define the
+project's import-able path.
 
 ```bash
-> touch Goatfile
+echo '{
+    "path":"github.com/yourusername/goatproject"
+}' > Goatfile
 ```
+
+You'll see the meaning of `path` a bit later.
 
 Now whenever `goat` is used (in place of `go`) on the command-line and you're
 current working directory is in `goatproject` or one of `goatproject`'s children
@@ -58,13 +63,18 @@ but we're too cool for that. Make your `Goatfile`'s contents be the following:
 
 ```json
 {
-    "loc":"code.google.com/p/go.example/newmath"
+    "path":"github.com/yourusername/goatproject",
+    "deps":[
+        {
+            "loc":"code.google.com/p/go.example/newmath"
+        }
+    ]
 }
 ```
 
 This is the equivalent of having goat do a
 `go get code.google.com/p/go.example/newmath` inside our project. To see a full
-write-up on `Goatfile` syntax and how to use it see the
+write-up on `Goatfile`'s dependency syntax and how to use it see the
 [Goatfile](/docs/goatfile.md) documentation.
 
 To actually download the dependency do (you'll need mercurial installed):
@@ -115,7 +125,7 @@ file `src/main.go` and put in it:
 package main
 
 import (
-    "foo"
+    "github.com/yourusername/goatproject/src/foo"
     "fmt"
 )
 
@@ -124,8 +134,15 @@ func main() {
 }
 ```
 
-Since foo is in the `src` directory of our goatproject, and the goatproject is
-on our `GOPATH` (when using `goat`), we can import it easily.
+The `github.com/yourusername/goatproject` part corresponds to the `path` field
+in the `Goatfile`, and when you use it goat does a bit of magic so that when go
+searches for that path it finds the project's root directory, even though the
+`goatproject` directory isn't in a folder called `github.com/yourusername`.
+
+In fact, the project's directory name could be anything at all. The only thing
+that matters is that the `path` field and any import statements used in the code
+match up. Additionally, the `src` directory we're putting everything in isn't
+explicitely needed either, but I think it's better for organization.
 
 ## Action!
 
