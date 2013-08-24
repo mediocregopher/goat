@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	. "goat/common"
-	"goat/env"
-	"goat/exec"
+	. "github.com/mediocregopher/goat/src/goat/common"
+	"github.com/mediocregopher/goat/src/goat/env"
+	"github.com/mediocregopher/goat/src/goat/exec"
 	"os"
 )
 

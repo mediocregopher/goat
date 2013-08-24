@@ -2,7 +2,7 @@ package env
 
 import (
 	"errors"
-	. "goat/common"
+	. "github.com/mediocregopher/goat/src/goat/common"
 	"os"
 	"path/filepath"
 	"syscall"

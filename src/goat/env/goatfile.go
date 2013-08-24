@@ -1,7 +1,7 @@
 package env
 
 import (
-	. "goat/common"
+	. "github.com/mediocregopher/goat/src/goat/common"
 	"encoding/json"
 	"fmt"
 	"io"

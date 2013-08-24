@@ -1,8 +1,8 @@
 package deps
 
 import (
-	. "goat/common"
-	"goat/exec"
+	. "github.com/mediocregopher/goat/src/goat/common"
+	"github.com/mediocregopher/goat/src/goat/exec"
 	"fmt"
 )
 
