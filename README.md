@@ -71,4 +71,6 @@ The binaries will be found in the `bin` directory.
 
 See the [tutorial](/docs/tut.md) for a basic use case for goat. After that
 check out the [Goatfile](/docs/goatfile.md) for more details on what kind of
-features goat has for dependency management.
+features goat has for dependency management. There are also some
+[special features](/docs/special.md) that don't really fit in anywhere else that
+might be useful to know about.
