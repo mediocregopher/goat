@@ -1,11 +1,11 @@
 package deps
 
 import (
-	. "github.com/mediocregopher/goat/src/goat/common"
-	"path/filepath"
 	"fmt"
+	. "github.com/mediocregopher/goat/src/goat/common"
 	"github.com/mediocregopher/goat/src/goat/exec"
 	"os"
+	"path/filepath"
 )
 
 func Git(genv *GoatEnv, dep *Dependency) error {

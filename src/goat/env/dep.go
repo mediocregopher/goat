@@ -2,10 +2,10 @@ package env
 
 import (
 	"errors"
-	. "github.com/mediocregopher/goat/src/goat/common"
-	"path/filepath"
-	"github.com/mediocregopher/goat/src/goat/env/deps"
 	"fmt"
+	. "github.com/mediocregopher/goat/src/goat/common"
+	"github.com/mediocregopher/goat/src/goat/env/deps"
+	"path/filepath"
 )
 
 type typefunc func(*GoatEnv, *Dependency) error
@@ -14,19 +14,19 @@ var typemap = map[string]typefunc{
 	"":    deps.GoGet,
 	"get": deps.GoGet,
 	"git": deps.Git,
-	"hg": deps.Hg,
+	"hg":  deps.Hg,
 }
 
-func header(c string,strs ... interface{}) {
+func header(c string, strs ...interface{}) {
 	fmt.Printf("\n")
-	for i:=0;i<80;i++ {
+	for i := 0; i < 80; i++ {
 		fmt.Printf(c)
 	}
 	fmt.Printf("\n")
 
 	fmt.Println(strs...)
 
-	for i:=0;i<80;i++ {
+	for i := 0; i < 80; i++ {
 		fmt.Printf(c)
 	}
 	fmt.Printf("\n")
@@ -42,12 +42,12 @@ func FetchDependencies(genv *GoatEnv) error {
 	var err error
 
 	if len(genv.Dependencies) > 0 {
-		header("#","Downloading dependencies listed in",genv.Goatfile)
+		header("#", "Downloading dependencies listed in", genv.Goatfile)
 
 		for i := range genv.Dependencies {
 			dep := &genv.Dependencies[i]
 
-			header("=","Retrieving dependency at:",dep.Location)
+			header("=", "Retrieving dependency at:", dep.Location)
 
 			if dep.Path == "" {
 				dep.Path = dep.Location
@@ -64,11 +64,10 @@ func FetchDependencies(genv *GoatEnv) error {
 
 			depprojroot := filepath.Join(genv.ProjRootLib, "src", dep.Path)
 
-
 			if IsProjRoot(depprojroot) {
-				header("-","Reading",depprojroot,"'s dependencies")
+				header("-", "Reading", depprojroot, "'s dependencies")
 
-				depgenv,err := SetupGoatEnv(depprojroot)
+				depgenv, err := SetupGoatEnv(depprojroot)
 				if err != nil {
 					return err
 				}
@@ -78,16 +77,14 @@ func FetchDependencies(genv *GoatEnv) error {
 					return err
 				}
 			} else {
-				header("-","No Goatfile found in",depprojroot)
+				header("-", "No Goatfile found in", depprojroot)
 			}
 		}
 
-		header("#","Done downloading dependencies for",genv.Goatfile)
+		header("#", "Done downloading dependencies for", genv.Goatfile)
 	} else {
-		header("-","No dependencies listed in",genv.Goatfile)
+		header("-", "No dependencies listed in", genv.Goatfile)
 	}
 
 	return nil
 }
-
-

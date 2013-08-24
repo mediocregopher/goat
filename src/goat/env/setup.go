@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func pathExists (path string) bool {
+func pathExists(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false
 	}
@@ -26,14 +26,14 @@ func Setup(genv *GoatEnv) error {
 			return err
 		}
 	}
-	
+
 	if genv.Path != "" {
-		loopbackPath := filepath.Join(genv.ProjRootLib,"src",genv.Path)
+		loopbackPath := filepath.Join(genv.ProjRootLib, "src", genv.Path)
 		if !pathExists(loopbackPath) {
 			loopbackDir := filepath.Dir(loopbackPath)
-			if err = os.MkdirAll(loopbackDir,0755); err != nil {
+			if err = os.MkdirAll(loopbackDir, 0755); err != nil {
 				return err
-			} else if err = os.Symlink(genv.ProjRoot,loopbackPath); err != nil {
+			} else if err = os.Symlink(genv.ProjRoot, loopbackPath); err != nil {
 				return err
 			}
 		}

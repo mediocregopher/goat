@@ -3,10 +3,10 @@ package env
 import (
 	"errors"
 	. "github.com/mediocregopher/goat/src/goat/common"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"syscall"
-	"io/ioutil"
 )
 
 // FindGoatFile returns the directory name of the parent that contains the
@@ -28,7 +28,7 @@ func FindGoatfile(dir string) (string, error) {
 // IsProjRoot returns whether or not a particular directory is the project
 // root for a goat project (aka, whether or not it has a goat file)
 func IsProjRoot(dir string) bool {
-	goatfile := filepath.Join(dir,GOATFILE)
+	goatfile := filepath.Join(dir, GOATFILE)
 	if _, err := os.Stat(goatfile); os.IsNotExist(err) {
 		return false
 	}
@@ -36,22 +36,22 @@ func IsProjRoot(dir string) bool {
 }
 
 // NewGoatEnv returns a new GoatEnv struct based on the directory passed in
-func SetupGoatEnv(projroot string) (*GoatEnv,error) {
+func SetupGoatEnv(projroot string) (*GoatEnv, error) {
 
 	goatfile := filepath.Join(projroot, GOATFILE)
 	projrootlib := filepath.Join(projroot, "lib")
 
 	genv := GoatEnv{ProjRoot: projroot,
 		ProjRootLib: projrootlib,
-		Goatfile: goatfile}
+		Goatfile:    goatfile}
 
-	genvraw,err := ioutil.ReadFile(goatfile)
+	genvraw, err := ioutil.ReadFile(goatfile)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	err = UnmarshalGoat(genvraw,&genv)
-	return &genv,err
+	err = UnmarshalGoat(genvraw, &genv)
+	return &genv, err
 }
 
 // ChrootEnv changes the root directories of a given environment. Useful if you

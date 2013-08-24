@@ -1,9 +1,9 @@
 package deps
 
 import (
+	"fmt"
 	. "github.com/mediocregopher/goat/src/goat/common"
 	"github.com/mediocregopher/goat/src/goat/exec"
-	"fmt"
 )
 
 func GoGet(genv *GoatEnv, dep *Dependency) error {
