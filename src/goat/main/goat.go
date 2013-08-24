@@ -61,6 +61,10 @@ func main() {
 		printGhelp()
 	}
 
+	if err = env.Setup(genv); err != nil {
+		fatal(err)
+	}
+
 	switch args[0] {
 	case "deps":
 		if genv != nil {
