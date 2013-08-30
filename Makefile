@@ -11,8 +11,9 @@ release: bin rel
 			GOPATH=$(shell pwd):$(GOPATH) GOOS=$$platform GOARCH=$$arch go build -o bin/goat-$$version/goat_"$$platform"_"$$arch" src/goat/main/goat.go; \
 		done; \
 	done; \
+	cd bin; \
 	echo "Tar-ing into rel/goat-$$version.tar.gz"; \
-	tar cvzf rel/goat-$$version.tar.gz bin/goat-$$version
+	tar cvzf ../rel/goat-$$version.tar.gz goat-$$version
 
 rel:
 	mkdir rel
