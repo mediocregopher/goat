@@ -54,15 +54,15 @@ func main() {
 		} else if err = env.EnvPrependProj(genv); err != nil {
 			fatal(err)
 		}
+
+		if err = env.Setup(genv); err != nil {
+			fatal(err)
+		}
 	}
 
 	args := os.Args[1:]
 	if len(args) < 1 {
 		printGhelp()
-	}
-
-	if err = env.Setup(genv); err != nil {
-		fatal(err)
 	}
 
 	switch args[0] {
