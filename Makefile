@@ -1,5 +1,5 @@
 local: bin
-	GOPATH=$(shell pwd):$(GOPATH) go build -o bin/goat src/goat/main/goat.go
+	go build -o bin/goat src/goat/main/goat.go
 
 release: bin rel
 	@echo -n "What's the name/version number of this release?: "; \
@@ -8,7 +8,7 @@ release: bin rel
 	for platform in darwin freebsd linux windows; do \
 		for arch in 386 amd64; do \
 			echo $$platform $$arch; \
-			GOPATH=$(shell pwd):$(GOPATH) GOOS=$$platform GOARCH=$$arch go build -o bin/goat-$$version/goat_"$$platform"_"$$arch" src/goat/main/goat.go; \
+			GOOS=$$platform GOARCH=$$arch go build -o bin/goat-$$version/goat_"$$platform"_"$$arch" src/goat/main/goat.go; \
 		done; \
 	done; \
 	cd bin; \
