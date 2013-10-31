@@ -1,20 +1,16 @@
 # goat
 
-        _))
-       /* \     _~
-       `;'\\__-' \_
-          | )  _ \ \
-         / / ``   w w
-        w w
-
-
-A simple, json-based go dependency manager and project isolator.
+       _))
+      /* \     _~
+      `;'\\__-' \_     A simple go dependency manager and project isolator
+         | )  _ \ \
+        / / ``   w w
+       w w
 
 Goat handles recursive, versioned, dependency management for go projects in an
 unobtrusive way. Goat also allows projects to be located anywhere on the file
-system, unattached to a Go workspace. 
-
-To switch to using goat you probably won't even have to change any code.
+system, unattached to a Go workspace. Best of all, to switch to using goat you
+won't have to change a single line of code.
 
 # The problem
 
