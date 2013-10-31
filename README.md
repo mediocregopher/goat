@@ -1,10 +1,20 @@
 # goat
 
-A simple, json-based go dependency manager
+        _))
+       /* \     _~
+       `;'\\__-' \_
+          | )  _ \ \
+         / / ``   w w
+        w w
+
+
+A simple, json-based go dependency manager and project isolator.
 
 Goat handles recursive, versioned, dependency management for go projects in an
-unobtrusive way. To switch to using goat you probably won't even have to change
-any code.
+unobtrusive way. Goat also allows projects to be located anywhere on the file
+system, unattached to a Go workspace. 
+
+To switch to using goat you probably won't even have to change any code.
 
 # The problem
 
@@ -44,10 +54,9 @@ There are two problems that goat aims to solve:
 # Installation
 
 To use goat you can either get a pre-compiled binary or build it yourself. Once
-you get the binary I recommend renaming it to `go` and putting it on your `PATH`
-so that it gets used whenever you use the `go` utility (See this
-[caveat](/docs/special.md#goat_actualgo) though). Don't worry, unless you are in
-a directory tree with a `Goatfile` or use one of goat's like two commands
+you get the binary I recommend renaming aliasing it as `go` (`alias go=goat`),
+so that `goat` gets used whenever you use the `go` utility. Don't worry, unless
+you are in a directory tree with a `Goatfile` or use one of goat's special commands
 nothing will be different.
 
 ## Pre-built
@@ -74,3 +83,8 @@ check out the [Goatfile](/docs/goatfile.md) for more details on what kind of
 features goat has for dependency management. There are also some
 [special features](/docs/special.md) that don't really fit in anywhere else that
 might be useful to know about.
+
+## Copyrights
+
+Goat ASCII Art (c) 1997 ejm, Creative Commons
+
