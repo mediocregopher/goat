@@ -3,7 +3,7 @@ package env
 import (
 	"errors"
 	. "github.com/mediocregopher/goat/common"
-	"io/ioutil"
+	"github.com/mediocregopher/goat/env/projreader"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -41,17 +41,15 @@ func SetupGoatEnv(projroot string) (*GoatEnv, error) {
 	goatfile := filepath.Join(projroot, GOATFILE)
 	projrootlib := filepath.Join(projroot, "lib")
 
-	genv := GoatEnv{ProjRoot: projroot,
-		ProjRootLib: projrootlib,
-		Goatfile:    goatfile}
-
-	genvraw, err := ioutil.ReadFile(goatfile)
+	genv, err := projreader.UnmarshalFile(goatfile)
 	if err != nil {
 		return nil, err
 	}
 
-	err = UnmarshalGoat(genvraw, &genv)
-	return &genv, err
+	genv.ProjRoot = projroot
+	genv.ProjRootLib = projrootlib
+	genv.Goatfile = goatfile
+	return genv, nil
 }
 
 // ChrootEnv changes the root directories of a given environment. Useful if you
