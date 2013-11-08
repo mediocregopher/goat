@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	. "github.com/mediocregopher/goat/src/goat/common"
+	. "github.com/mediocregopher/goat/common"
 	"io"
 )
 

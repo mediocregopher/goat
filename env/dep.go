@@ -3,8 +3,8 @@ package env
 import (
 	"errors"
 	"fmt"
-	. "github.com/mediocregopher/goat/src/goat/common"
-	"github.com/mediocregopher/goat/src/goat/env/deps"
+	. "github.com/mediocregopher/goat/common"
+	"github.com/mediocregopher/goat/env/deps"
 	"path/filepath"
 )
 

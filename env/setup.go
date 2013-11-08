@@ -1,7 +1,7 @@
 package env
 
 import (
-	. "github.com/mediocregopher/goat/src/goat/common"
+	. "github.com/mediocregopher/goat/common"
 	"os"
 	"path/filepath"
 )

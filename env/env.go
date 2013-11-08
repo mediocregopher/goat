@@ -2,7 +2,7 @@ package env
 
 import (
 	"errors"
-	. "github.com/mediocregopher/goat/src/goat/common"
+	. "github.com/mediocregopher/goat/common"
 	"io/ioutil"
 	"os"
 	"path/filepath"
