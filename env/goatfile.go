@@ -3,8 +3,8 @@ package env
 import (
 	"bytes"
 	"fmt"
-  "launchpad.net/goyaml"
-	. "github.com/mediocregopher/goat/src/goat/common"
+	"launchpad.net/goyaml"
+	. "github.com/mediocregopher/goat/common"
 	"io"
 )
 
