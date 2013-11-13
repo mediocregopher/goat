@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+  "launchpad.net/goyaml"
 	. "github.com/mediocregopher/goat/common"
 	"github.com/mediocregopher/goat/env"
 	"github.com/mediocregopher/goat/exec"
@@ -28,9 +29,11 @@ The commands are:
 
     deps    Read the Goatfile for this project and set up dependencies in the
             lib folder. Recursively download dependencies wherever a Goatfile is
-            encountered
+            encountered.
 
-    ghelp   Show this dialog
+    genv    Show goat environment.
+
+    ghelp   Show this dialog.
 
 All other commands are passed through to the go binary on your system. Try '%s
 help' for its available commands
@@ -75,6 +78,8 @@ func main() {
 		} else {
 			fatal(errors.New("Goatfile not found on current path"))
 		}
+  case "genv":
+    showGenv(genv)
 	case "ghelp":
 		printGhelp()
 	default:
@@ -88,3 +93,12 @@ func main() {
 		}
 	}
 }
+
+func showGenv(genv *GoatEnv) {
+  d, err := goyaml.Marshal(&genv)
+  if err != nil {
+      panic(err)
+  }
+  fmt.Printf("---\n%s\n\n", string(d))
+}
+

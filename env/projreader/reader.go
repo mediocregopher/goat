@@ -1,9 +1,10 @@
 package projreader
 
 import (
-	"encoding/json"
+  "launchpad.net/goyaml"
 	"github.com/mediocregopher/goat/common"
 	"io/ioutil"
+  "fmt"
 )
 
 // UnmarshalFile reads the data out of a file and puts it through Unmarshal
@@ -19,8 +20,10 @@ func UnmarshalFile(file string) (*common.GoatEnv, error) {
 // structure
 func Unmarshal(genvraw []byte) (*common.GoatEnv, error) {
 	var genv *common.GoatEnv
-	if err := json.Unmarshal(genvraw, genv); err != nil {
+	if err := goyaml.Unmarshal(genvraw, &genv); err != nil {
 		return nil, err	
 	}
+  fmt.Println(genv.Path)
 	return genv, nil
 }
+
