@@ -2,8 +2,8 @@ package env
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
+  "launchpad.net/goyaml"
 	. "github.com/mediocregopher/goat/src/goat/common"
 	"io"
 )
@@ -19,12 +19,12 @@ func deprecationLog(genv *GoatEnv) {
 func UnmarshalGoat(genvraw []byte, genv *GoatEnv) error {
 	var err error
 
-	if err = json.Unmarshal(genvraw, genv); err == nil && (genv.Path != "" ||
+	if err = goyaml.Unmarshal(genvraw, &genv); err == nil && (genv.Path != "" ||
 		genv.Dependencies != nil) {
 		return nil
 	}
 
-	// First version of goat had Goatfiles just being a stream of json
+	// First version of goat had Goatfiles just being a stream of YAML
 	// dependency objects. Not sure why I thought that was a good idea.
 	buf := bytes.NewBuffer(genvraw)
 	deps := make([]Dependency, 0, 8)
@@ -42,7 +42,7 @@ func UnmarshalGoat(genvraw []byte, genv *GoatEnv) error {
 			return err
 		} else {
 			dep := Dependency{}
-			err = json.Unmarshal(depraw, &dep)
+			err = goyaml.Unmarshal(depraw, &dep)
 			if err != nil {
 				return err
 			} else if dep.Location == "" {
