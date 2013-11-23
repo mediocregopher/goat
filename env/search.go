@@ -1,9 +1,9 @@
 package env
 
 import (
-	"path/filepath"
 	"errors"
 	"os"
+	"path/filepath"
 )
 
 // FindProjRoot returns the directory name of the parent that contains the

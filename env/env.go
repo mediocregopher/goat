@@ -2,10 +2,10 @@ package env
 
 import (
 	. "github.com/mediocregopher/goat/common"
-	"os"
-	"launchpad.net/goyaml"
-	"path/filepath"
 	"io/ioutil"
+	"launchpad.net/goyaml"
+	"os"
+	"path/filepath"
 	"syscall"
 )
 
@@ -16,7 +16,7 @@ var PROJFILE = ".go.yaml"
 func unmarshal(genvraw []byte) (*GoatEnv, error) {
 	genv := GoatEnv{}
 	if err := goyaml.Unmarshal(genvraw, &genv); err != nil {
-		return nil, err	
+		return nil, err
 	}
 	return &genv, nil
 }
