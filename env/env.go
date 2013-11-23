@@ -1,81 +1,113 @@
 package env
 
 import (
-	"errors"
 	. "github.com/mediocregopher/goat/common"
-	"github.com/mediocregopher/goat/env/projreader"
 	"os"
+	"launchpad.net/goyaml"
 	"path/filepath"
+	"io/ioutil"
 	"syscall"
 )
 
-// FindGoatFile returns the directory name of the parent that contains the
-// Goatfile
-func FindGoatfile(dir string) (string, error) {
+var GOATFILE = "Goatfile"
 
-	if IsProjRoot(dir) {
-		return dir, nil
+// unmarshal takes in some bytes and tries to decode them into a GoatEnv
+// structure
+func unmarshal(genvraw []byte) (*GoatEnv, error) {
+	genv := GoatEnv{}
+	if err := goyaml.Unmarshal(genvraw, &genv); err != nil {
+		return nil, err	
 	}
-
-	parent := filepath.Dir(dir)
-	if dir == parent {
-		return "", errors.New("Goatfile not found")
-	}
-
-	return FindGoatfile(parent)
+	return &genv, nil
 }
 
-// IsProjRoot returns whether or not a particular directory is the project
-// root for a goat project (aka, whether or not it has a goat file)
-func IsProjRoot(dir string) bool {
-	goatfile := filepath.Join(dir, GOATFILE)
-	if _, err := os.Stat(goatfile); os.IsNotExist(err) {
-		return false
-	}
-	return true
+type GoatEnv struct {
+	// ProjRoot is the absolute path to the project root in the current
+	// environment
+	ProjRoot string
+
+	// Path is the path that the project will be using for its own internal
+	// import statements, and consequently what other projects depending on this
+	// one will use as well.
+	Path string `yaml:"path"`
+
+	// DepDir is the directory to set as the GOPATH when fetching dependencies.
+	// It is relative to the projRoot
+	DepDir string `yaml:"depdir"`
+
+	// Dependencies are the dependencies listed in the project's Goatfile
+	Dependencies []Dependency `yaml:"deps"`
 }
 
-// NewGoatEnv returns a new GoatEnv struct based on the directory passed in
-func SetupGoatEnv(projroot string) (*GoatEnv, error) {
-
-	goatfile := filepath.Join(projroot, GOATFILE)
-	projrootlib := filepath.Join(projroot, "lib")
-
-	genv, err := projreader.UnmarshalFile(goatfile)
+// NewGoatEnv takes in the directory where a goat project file can be found,
+// creates the GoatEnv struct based on that file, and returns it
+func NewGoatEnv(projroot string) (*GoatEnv, error) {
+	projfile := filepath.Join(projroot, GOATFILE)
+	b, err := ioutil.ReadFile(projfile)
+	if err != nil {
+		return nil, err
+	}
+	genv, err := unmarshal(b)
 	if err != nil {
 		return nil, err
 	}
 
 	genv.ProjRoot = projroot
-	genv.ProjRootLib = projrootlib
-	genv.Goatfile = goatfile
+	if genv.DepDir == "" {
+		genv.DepDir = ".deps"
+	}
 	return genv, nil
 }
 
-// ChrootEnv changes the root directories of a given environment. Useful if you
-// want to make the dependencies download somewhere else
-func ChrootEnv(genv *GoatEnv, newroot string) {
-	newrootlib := filepath.Join(newroot, "lib")
-	genv.ProjRoot = newroot
-	genv.ProjRootLib = newrootlib
+// AbsDepDir is the absolute path to the directory specified by DepDir
+func (genv *GoatEnv) AbsDepDir() string {
+	return filepath.Join(genv.ProjRoot, genv.DepDir)
 }
 
-func envPrepend(dir string) error {
-	gopath, _ := syscall.Getenv("GOPATH")
-	return syscall.Setenv("GOPATH", dir+":"+gopath)
+// AbsProjFile is the absolute path to the goat project file for this
+// environment
+func (genv *GoatEnv) AbsProjFile() string {
+	return filepath.Join(genv.ProjRoot, GOATFILE)
 }
 
-// EnvPrependProj prepends a goat project's root and lib directories to the GOPATH
-func EnvPrependProj(genv *GoatEnv) error {
-	err := envPrepend(genv.ProjRoot)
-	if err != nil {
-		return err
+func pathExists(path string) bool {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// Setup makes sure the goat env has all the proper directories created inside
+// of it. This includes the lib/ directory, and if it's specified the Path
+// loopback in the lib/ directory
+func (genv *GoatEnv) Setup() error {
+	var err error
+
+	// Make the lib directory if it doesn't exist
+	depdir := genv.AbsDepDir()
+	if !pathExists(depdir) {
+		err = os.Mkdir(depdir, 0755)
+		if err != nil {
+			return err
+		}
 	}
 
-	return envPrepend(genv.ProjRootLib)
+	if genv.Path != "" {
+		loopbackPath := filepath.Join(depdir, "src", genv.Path)
+		if !pathExists(loopbackPath) {
+			loopbackDir := filepath.Dir(loopbackPath)
+			if err = os.MkdirAll(loopbackDir, 0755); err != nil {
+				return err
+			} else if err = os.Symlink(genv.ProjRoot, loopbackPath); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
-func ActualGo() (string, bool) {
-	bin, ok := syscall.Getenv("GOAT_ACTUALGO")
-	return bin, ok
+func (genv *GoatEnv) PrependToGoPath() error {
+	gopath, _ := syscall.Getenv("GOPATH")
+	return syscall.Setenv("GOPATH", genv.AbsDepDir()+":"+gopath)
 }

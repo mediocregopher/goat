@@ -3,10 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	. "github.com/mediocregopher/goat/common"
 	"github.com/mediocregopher/goat/env"
 	"github.com/mediocregopher/goat/exec"
 	"os"
+	"syscall"
 )
 
 func fatal(err error) {
@@ -46,16 +46,18 @@ func main() {
 	}
 
 	projroot, err := env.FindGoatfile(cwd)
-	var genv *GoatEnv
+	var genv *env.GoatEnv
 	if err == nil {
-		genv, err = env.SetupGoatEnv(projroot)
+		genv, err = env.NewGoatEnv(projroot)
 		if err != nil {
-			fatal(err)
-		} else if err = env.EnvPrependProj(genv); err != nil {
 			fatal(err)
 		}
 
-		if err = env.Setup(genv); err != nil {
+		if err = genv.PrependToGoPath(); err != nil {
+			fatal(err)
+		}
+
+		if err = genv.Setup(); err != nil {
 			fatal(err)
 		}
 	}
@@ -68,7 +70,7 @@ func main() {
 	switch args[0] {
 	case "deps":
 		if genv != nil {
-			err := env.FetchDependencies(genv)
+			err := genv.FetchDependencies(genv.AbsDepDir())
 			if err != nil {
 				fatal(err)
 			}
@@ -78,7 +80,7 @@ func main() {
 	case "ghelp":
 		printGhelp()
 	default:
-		if actualgo, ok := env.ActualGo(); ok {
+		if actualgo, ok := ActualGo(); ok {
 			exec.PipedCmd(actualgo, args...)
 		} else {
 			newargs := make([]string, len(args)+1)
@@ -87,4 +89,10 @@ func main() {
 			exec.PipedCmd("/usr/bin/env", newargs...)
 		}
 	}
+}
+
+// ActualGo returns the GOAT_ACTUALGO environment variable contents, and whether
+// or not the variable was actually set
+func ActualGo() (string, bool) {
+	return syscall.Getenv("GOAT_ACTUALGO")
 }

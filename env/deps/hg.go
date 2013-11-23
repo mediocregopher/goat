@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 )
 
-func Hg(genv *GoatEnv, dep *Dependency) error {
-	localloc := filepath.Join(genv.ProjRootLib, "src", dep.Path)
+func Hg(depdir string, dep *Dependency) error {
+	localloc := filepath.Join(depdir, "src", dep.Path)
 
 	fmt.Println("hg", "clone", dep.Location, localloc)
 	err := exec.PipedCmd("hg", "clone", dep.Location, localloc)
