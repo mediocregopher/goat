@@ -7,7 +7,7 @@ import (
 )
 
 // FindProjRoot returns the directory name of the parent that contains the
-// .go file
+// .go.yaml file
 func FindProjRoot(dir string) (string, error) {
 
 	if IsProjRoot(dir) {
@@ -16,7 +16,7 @@ func FindProjRoot(dir string) (string, error) {
 
 	parent := filepath.Dir(dir)
 	if dir == parent {
-		return "", errors.New("Goatfile not found")
+		return "", errors.New(".go.yaml not found")
 	}
 
 	return FindProjRoot(parent)

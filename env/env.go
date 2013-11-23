@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-var PROJFILE = ".go"
+var PROJFILE = ".go.yaml"
 
 // unmarshal takes in some bytes and tries to decode them into a GoatEnv
 // structure

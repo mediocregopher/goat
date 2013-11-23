@@ -26,9 +26,9 @@ Usage:
 
 The commands are:
 
-    deps    Read the .go file for this project and set up dependencies in the
-			dependencies folder specified (default ".deps"). Recursively
-			download dependencies wherever a .go file is encountered
+	deps    Read the .go.yaml file for this project and set up dependencies in
+			the dependencies folder specified (default ".deps"). Recursively
+			download dependencies wherever a .go.yaml file is encountered
 
     ghelp   Show this dialog
 
@@ -75,7 +75,7 @@ func main() {
 				fatal(err)
 			}
 		} else {
-			fatal(errors.New(".go file not found on current path"))
+			fatal(errors.New(".go.yaml file not found on current path"))
 		}
 	case "ghelp":
 		printGhelp()
