@@ -26,9 +26,9 @@ Usage:
 
 The commands are:
 
-    deps    Read the Goatfile for this project and set up dependencies in the
-            lib folder. Recursively download dependencies wherever a Goatfile is
-            encountered
+    deps    Read the .go file for this project and set up dependencies in the
+			dependencies folder specified (default ".deps"). Recursively
+			download dependencies wherever a .go file is encountered
 
     ghelp   Show this dialog
 
@@ -45,7 +45,7 @@ func main() {
 		fatal(err)
 	}
 
-	projroot, err := env.FindGoatfile(cwd)
+	projroot, err := env.FindProjRoot(cwd)
 	var genv *env.GoatEnv
 	if err == nil {
 		genv, err = env.NewGoatEnv(projroot)
@@ -75,7 +75,7 @@ func main() {
 				fatal(err)
 			}
 		} else {
-			fatal(errors.New("Goatfile not found on current path"))
+			fatal(errors.New(".go file not found on current path"))
 		}
 	case "ghelp":
 		printGhelp()

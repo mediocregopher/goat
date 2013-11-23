@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-var GOATFILE = "Goatfile"
+var PROJFILE = ".go"
 
 // unmarshal takes in some bytes and tries to decode them into a GoatEnv
 // structure
@@ -42,7 +42,7 @@ type GoatEnv struct {
 // NewGoatEnv takes in the directory where a goat project file can be found,
 // creates the GoatEnv struct based on that file, and returns it
 func NewGoatEnv(projroot string) (*GoatEnv, error) {
-	projfile := filepath.Join(projroot, GOATFILE)
+	projfile := filepath.Join(projroot, PROJFILE)
 	b, err := ioutil.ReadFile(projfile)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (genv *GoatEnv) AbsDepDir() string {
 // AbsProjFile is the absolute path to the goat project file for this
 // environment
 func (genv *GoatEnv) AbsProjFile() string {
-	return filepath.Join(genv.ProjRoot, GOATFILE)
+	return filepath.Join(genv.ProjRoot, PROJFILE)
 }
 
 func pathExists(path string) bool {
