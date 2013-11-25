@@ -20,3 +20,8 @@ rel:
 
 bin:
 	mkdir bin
+
+deps:
+	mkdir -p .deps; \
+	GOPATH=$(CURDIR)/.deps go get launchpad.net/goyaml
+
