@@ -15,7 +15,8 @@ the project will look like at the end of this tutorial:
 ```
 /goatproject
     .go.yaml
-    /.deps (contains some stuff)
+    /.goat
+        /deps (contains some stuff)
     /foo
         foo.go
     main.go
@@ -51,7 +52,7 @@ current working directory is in `goatproject` or one of `goatproject`'s children
 your `GOPATH` will be set to (assuming you put your project in `/tmp` like me):
 
 ```
-/tmp/goatproject/.deps
+/tmp/goatproject/.goat/deps
 ```
 
 This isn't too important, but it may be useful in the future so there ya go.
@@ -78,12 +79,12 @@ To actually download the dependency do (you'll need mercurial installed):
 > goat deps
 ```
 
-This should fetch the dependency and put it in the `.deps/` directory in your
-project. You shouldn't check this directory into your version control (if
+This should fetch the dependency and put it in the `.goat/deps` directory in
+your project. You shouldn't check this directory into your version control (if
 you're using any), it's just a utility for goat.
 
 If in the future you change the .go.yaml you can call `goat deps` again and it
-will re-setup your `lib` directory with the changes.
+will re-setup your `.goat/deps` directory with the changes.
 
 ## Using the dependency
 
@@ -108,7 +109,8 @@ func SqrtThree() float64 {
 
 You can see the syntax for using this library is exactly the same as if we had
 installed the dependency globally. This is because the dependency is in our
-`.deps` directory, which is at the front of our `GOPATH` (when using `goat`).
+`.goat/deps` directory, which is at the front of our `GOPATH` (when using
+`goat`).
 
 ## Using our own package
 

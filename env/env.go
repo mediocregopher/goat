@@ -31,10 +31,6 @@ type GoatEnv struct {
 	// one will use as well.
 	Path string `yaml:"path"`
 
-	// DepDir is the directory to set as the GOPATH when fetching dependencies.
-	// It is relative to the projRoot
-	DepDir string `yaml:"depdir"`
-
 	// Dependencies are the dependencies listed in the project's Goatfile
 	Dependencies []Dependency `yaml:"deps"`
 }
@@ -53,15 +49,18 @@ func NewGoatEnv(projroot string) (*GoatEnv, error) {
 	}
 
 	genv.ProjRoot = projroot
-	if genv.DepDir == "" {
-		genv.DepDir = ".deps"
-	}
 	return genv, nil
 }
 
-// AbsDepDir is the absolute path to the directory specified by DepDir
+// AbsDepDir is the absolute path to the dependency directory inside the goat
+// data directory
 func (genv *GoatEnv) AbsDepDir() string {
-	return filepath.Join(genv.ProjRoot, genv.DepDir)
+	return filepath.Join(genv.AbsGoatDir(), "deps")
+}
+
+// AbsGoatDir is the absolute path to the goat data directory
+func (genv *GoatEnv) AbsGoatDir() string {
+	return filepath.Join(genv.ProjRoot, ".goat")
 }
 
 // AbsProjFile is the absolute path to the goat project file for this
@@ -83,10 +82,10 @@ func pathExists(path string) bool {
 func (genv *GoatEnv) Setup() error {
 	var err error
 
-	// Make the lib directory if it doesn't exist
+	// Make the dep directory if it doesn't exist
 	depdir := genv.AbsDepDir()
 	if !pathExists(depdir) {
-		err = os.Mkdir(depdir, 0755)
+		err = os.MkdirAll(depdir, 0755)
 		if err != nil {
 			return err
 		}

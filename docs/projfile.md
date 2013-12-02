@@ -16,7 +16,6 @@ Here's a basic `.go.yaml`:
 ```yaml
 ---
 path: github.com/username/myproject
-depdir: deps
 deps:
   - loc: code.google.com/p/go.example/newmath
     type: goget
@@ -27,8 +26,8 @@ deps:
     path: github.com/mediocregopher/goat
 ```
 
-The outer object describes attributes about the project. It has the keys `path`,
-`depdir`, and `deps`.
+The outer object describes attributes about the project. It has the keys `path`
+and `deps`.
 
 ## path
 
@@ -46,12 +45,6 @@ import "github.com/username/myproject/bettermath"
 Note that your project wouldn't have to actually exist in the
 `github.com/username` directory tree, it could be anywhere. Goat takes care of
 the `GOPATH` for you.
-
-## depdir
-
-This is the folder inside your project where dependencies are stored. Its value
-defaults to `.deps`, but you can change it to whatever you like. This folder
-should NOT be included in any version control you're using.
 
 ## deps
 

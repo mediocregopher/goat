@@ -1,4 +1,4 @@
-DEPSDIR= $(CURDIR)/.deps
+DEPSDIR= $(CURDIR)/.goat/deps
 GOPATH= GOPATH=$(DEPSDIR)
 GOATLOOPBACK= $(DEPSDIR)/src/github.com/mediocregopher
 
