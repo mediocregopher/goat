@@ -31,7 +31,7 @@ type GoatEnv struct {
 	// one will use as well.
 	Path string `yaml:"path"`
 
-	// Dependencies are the dependencies listed in the project's Goatfile
+	// Dependencies are the dependencies listed in the project's project file
 	Dependencies []Dependency `yaml:"deps"`
 }
 

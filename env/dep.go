@@ -76,7 +76,7 @@ func (genv *GoatEnv) FetchDependencies(depdir string) error {
 					return err
 				}
 			} else {
-				header("-", "No Goatfile found in", depprojroot)
+				header("-", "No "+PROJFILE+" found in", depprojroot)
 			}
 		}
 
