@@ -3,10 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	. "github.com/mediocregopher/goat/src/goat/common"
-	"github.com/mediocregopher/goat/src/goat/env"
-	"github.com/mediocregopher/goat/src/goat/exec"
+	"github.com/mediocregopher/goat/env"
+	"github.com/mediocregopher/goat/exec"
 	"os"
+	"syscall"
 )
 
 func fatal(err error) {
@@ -26,9 +26,9 @@ Usage:
 
 The commands are:
 
-    deps    Read the Goatfile for this project and set up dependencies in the
-            lib folder. Recursively download dependencies wherever a Goatfile is
-            encountered
+    deps    Read the .go.yaml file for this project and set up dependencies in
+            the dependencies folder specified (default ".deps"). Recursively
+            download dependencies wherever a .go.yaml file is encountered
 
     ghelp   Show this dialog
 
@@ -45,17 +45,19 @@ func main() {
 		fatal(err)
 	}
 
-	projroot, err := env.FindGoatfile(cwd)
-	var genv *GoatEnv
+	projroot, err := env.FindProjRoot(cwd)
+	var genv *env.GoatEnv
 	if err == nil {
-		genv, err = env.SetupGoatEnv(projroot)
+		genv, err = env.NewGoatEnv(projroot)
 		if err != nil {
-			fatal(err)
-		} else if err = env.EnvPrependProj(genv); err != nil {
 			fatal(err)
 		}
 
-		if err = env.Setup(genv); err != nil {
+		if err = genv.PrependToGoPath(); err != nil {
+			fatal(err)
+		}
+
+		if err = genv.Setup(); err != nil {
 			fatal(err)
 		}
 	}
@@ -68,17 +70,17 @@ func main() {
 	switch args[0] {
 	case "deps":
 		if genv != nil {
-			err := env.FetchDependencies(genv)
+			err := genv.FetchDependencies(genv.AbsDepDir())
 			if err != nil {
 				fatal(err)
 			}
 		} else {
-			fatal(errors.New("Goatfile not found on current path"))
+			fatal(errors.New(".go.yaml file not found on current path"))
 		}
 	case "ghelp":
 		printGhelp()
 	default:
-		if actualgo, ok := env.ActualGo(); ok {
+		if actualgo, ok := ActualGo(); ok {
 			exec.PipedCmd(actualgo, args...)
 		} else {
 			newargs := make([]string, len(args)+1)
@@ -87,4 +89,10 @@ func main() {
 			exec.PipedCmd("/usr/bin/env", newargs...)
 		}
 	}
+}
+
+// ActualGo returns the GOAT_ACTUALGO environment variable contents, and whether
+// or not the variable was actually set
+func ActualGo() (string, bool) {
+	return syscall.Getenv("GOAT_ACTUALGO")
 }

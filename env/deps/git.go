@@ -2,14 +2,14 @@ package deps
 
 import (
 	"fmt"
-	. "github.com/mediocregopher/goat/src/goat/common"
-	"github.com/mediocregopher/goat/src/goat/exec"
+	. "github.com/mediocregopher/goat/common"
+	"github.com/mediocregopher/goat/exec"
 	"os"
 	"path/filepath"
 )
 
-func Git(genv *GoatEnv, dep *Dependency) error {
-	localloc := filepath.Join(genv.ProjRootLib, "src", dep.Path)
+func Git(depdir string, dep *Dependency) error {
+	localloc := filepath.Join(depdir, "src", dep.Path)
 
 	fmt.Println("git", "clone", dep.Location, localloc)
 	err := exec.PipedCmd("git", "clone", dep.Location, localloc)
