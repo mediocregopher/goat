@@ -17,5 +17,5 @@ type Dependency struct {
 	// Reference is only valueable for version-control Types (e.g. git). It can
 	// be any valid reference in that version control system (branch name, tag,
 	// commit hash). Default depends on the Type, git is "master", hg is "tip".
-	Reference string `yaml:"reference"`
+	Reference string `yaml:"ref`
 }

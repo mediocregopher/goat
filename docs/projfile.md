@@ -22,7 +22,7 @@ deps:
 
   - loc: https://github.com:mediocregopher/goat.git
     type: git
-    reference: master
+    ref: master
     path: github.com/mediocregopher/goat
 ```
 
@@ -64,7 +64,7 @@ supported. This tells goat how to fetch the dependency. For example if `type` is
 set to `goget` then `go get <path>` is used, while if it's `git` then `git clone
 <path>` will be used.
 
-### reference
+### ref
 
 The option is only valid for `type`s that have some kind of version reference
 system (for example `git` does, `goget` doesn't). Here are the defaults for the
