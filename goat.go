@@ -26,9 +26,9 @@ Usage:
 
 The commands are:
 
-	deps    Read the .go.yaml file for this project and set up dependencies in
-			the dependencies folder specified (default ".deps"). Recursively
-			download dependencies wherever a .go.yaml file is encountered
+    deps    Read the .go.yaml file for this project and set up dependencies in
+            the dependencies folder specified (default ".deps"). Recursively
+            download dependencies wherever a .go.yaml file is encountered
 
     ghelp   Show this dialog
 
