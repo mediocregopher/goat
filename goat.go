@@ -93,6 +93,10 @@ func main() {
 				fatal(err)
 			}
 			genv, err = env.GenGoatEnv(pwd)
+			if err != nil {
+				fatal(err)
+			}
+			err = genv.PrependToGoPath()
 		}
 		if err != nil {
 			fatal(err)

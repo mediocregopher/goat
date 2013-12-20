@@ -9,6 +9,21 @@ import (
 	"sort"
 )
 
+// depList implements sort.Interface for lists of Dependencies.
+type depList []Dependency
+
+func (deps depList) Len() int {
+	return len(deps)
+}
+
+func (deps depList) Less(i, j int) bool {
+	return deps[i].Location < deps[j].Location
+}
+
+func (deps depList) Swap(i, j int) {
+	deps[i], deps[j] = deps[j], deps[i]
+}
+
 type typefunc func(string, *Dependency) error
 
 var typemap = map[string]typefunc{
@@ -113,43 +128,27 @@ func (genv *GoatEnv) UpdateDependencies() error {
 	for _, dep := range genv.Dependencies {
 		imports[dep.Location] = dep
 	}
-	deps := make(depList, 0, len(imports))
+	genv.Dependencies = make(depList, 0, len(imports))
 	for _, dep := range imports {
-		deps = append(deps, dep)
+		genv.Dependencies = append(genv.Dependencies, dep)
 	}
-	sort.Sort(deps)
-	genv.Dependencies = deps
+	sort.Sort(depList(genv.Dependencies))
 	return nil
 }
 
 func (genv *GoatEnv) FreezeDependencies() error {
-	for i, dep := range genv.Dependencies {
-		if dep.Path == "" {
-			dep.Path = dep.Location
-		}
-		repoType, repoUrl, repoRef, err := FreezeImport(dep.Path)
+	combined := make(map[string]Dependency)
+	for _, dep := range genv.Dependencies {
+		frozenDep, err := FreezeImport(dep)
 		if err != nil {
 			fmt.Println(err)
-			continue
 		}
-		dep.Location = repoUrl
-		dep.Type = repoType.String()
-		dep.Reference = repoRef
-		genv.Dependencies[i] = dep
+		combined[frozenDep.Location] = frozenDep
 	}
+	genv.Dependencies = make(depList, 0, len(combined))
+	for _, dep := range combined {
+		genv.Dependencies = append(genv.Dependencies, dep)
+	}
+	sort.Sort(depList(genv.Dependencies))
 	return nil
-}
-
-type depList []Dependency
-
-func (deps depList) Len() int {
-	return len(deps)
-}
-
-func (deps depList) Less(i, j int) bool {
-	return deps[i].Location < deps[j].Location
-}
-
-func (deps depList) Swap(i, j int) {
-	deps[i], deps[j] = deps[j], deps[i]
 }

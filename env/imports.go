@@ -9,9 +9,14 @@ import (
 	"path"
 	"sort"
 	"strings"
+	"sync"
+	"syscall"
 )
 
-var srcDirs []string
+var (
+	srcDirs     []string
+	srcDirsOnce sync.Once
+)
 
 func getImports(path string) ([]string, error) {
 	imports, err := getImportsMap(path)
@@ -37,8 +42,10 @@ func getImportsMap(path string) (map[string]Dependency, error) {
 }
 
 func walkImports(basePath string, imports map[string]Dependency, pkg *build.Package) {
+	srcDirsOnce.Do(initSrcDirs)
+
 	for _, importPath := range pkg.Imports {
-		subPkg, err := tryImport(importPath)
+		subPkg, err := tryImport(importPath, 0)
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -61,9 +68,10 @@ func walkImports(basePath string, imports map[string]Dependency, pkg *build.Pack
 	}
 }
 
-func tryImport(path string) (*build.Package, error) {
+func tryImport(path string, mode build.ImportMode) (*build.Package, error) {
+	srcDirsOnce.Do(initSrcDirs)
 	for _, srcDir := range srcDirs {
-		pkg, err := build.Import(path, srcDir, 0)
+		pkg, err := build.Import(path, srcDir, mode)
 		if err == nil {
 			return pkg, nil
 		}
@@ -71,31 +79,55 @@ func tryImport(path string) (*build.Package, error) {
 	return nil, fmt.Errorf("Couldn't find %s in any of %v", path, srcDirs)
 }
 
-func init() {
+// Defer getting the list of srcDirs until after path prepend is done
+func initSrcDirs() {
+	gopath, _ := syscall.Getenv("GOPATH")
+	build.Default.GOPATH = gopath
 	srcDirs = build.Default.SrcDirs()
 }
 
-func FreezeImport(path string) (RepoType, string, string, error) {
-	pkg, err := tryImport(path)
-	if err != nil {
-		return NoRepo, "", "", err
+func FreezeImport(dep Dependency) (Dependency, error) {
+	if dep.Path == "" {
+		dep.Path = dep.Location
 	}
-	repoDir, repoType := repoRoot(pkg)
+
+	pkg, err := tryImport(dep.Path, build.FindOnly)
+	if err != nil {
+		return dep, err
+	}
+	importPath, repoDir, repoType := repoRoot(pkg)
 
 	var url, ref string
 	switch repoType {
 	case NoRepo:
-		return NoRepo, "", "", fmt.Errorf("No repo found for %s", pkg.ImportPath)
+		return dep, fmt.Errorf("No repo found for %s", pkg.ImportPath)
 	case Git:
 		url, ref, err = deps.GitInfo(repoDir)
 	case Hg:
 		url, ref, err = deps.HgInfo(repoDir)
 	}
 	if err != nil {
-		return NoRepo, "", "", err
+		return dep, err
 	}
 
-	return repoType, url, ref, nil
+	dep.Path = importPath
+	dep.Location = url
+	dep.Reference = ref
+
+	return dep, nil
+}
+
+func repoRoot(pkg *build.Package) (string, string, RepoType) {
+	for importPath := pkg.ImportPath; importPath != "."; importPath = path.Dir(importPath) {
+		dir := path.Join(pkg.SrcRoot, importPath)
+		if _, err := os.Stat(path.Join(dir, ".git")); !os.IsNotExist(err) {
+			return importPath, dir, Git
+		}
+		if _, err := os.Stat(path.Join(dir, ".hg")); !os.IsNotExist(err) {
+			return importPath, dir, Hg
+		}
+	}
+	return "", "", NoRepo
 }
 
 type RepoType int
@@ -117,17 +149,4 @@ func (rt RepoType) String() string {
 	default:
 		return ""
 	}
-}
-
-func repoRoot(pkg *build.Package) (string, RepoType) {
-	for p := pkg.ImportPath; p != "."; p = path.Dir(p) {
-		dir := path.Join(pkg.SrcRoot, p)
-		if _, err := os.Stat(path.Join(dir, ".git")); !os.IsNotExist(err) {
-			return dir, Git
-		}
-		if _, err := os.Stat(path.Join(dir, ".hg")); !os.IsNotExist(err) {
-			return dir, Hg
-		}
-	}
-	return "", NoRepo
 }
