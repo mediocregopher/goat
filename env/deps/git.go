@@ -49,3 +49,27 @@ func Git(depdir string, dep *Dependency) error {
 	return err
 
 }
+
+func GitInfo(path string) (string, string, error) {
+	origcwd, err := os.Getwd()
+	if err != nil {
+		return "", "", err
+	}
+
+	err = os.Chdir(path)
+	if err != nil {
+		return "", "", err
+	}
+	defer os.Chdir(origcwd)
+
+	ref, err := exec.TrimmedCmd("git", "rev-parse", "--verify", "HEAD")
+	if err != nil {
+		return "", "", err
+	}
+	url, err := exec.TrimmedCmd("git", "config", "--get", "remote.origin.url")
+	if err != nil {
+		return "", "", err
+	}
+
+	return url, ref, nil
+}

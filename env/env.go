@@ -21,10 +21,19 @@ func unmarshal(genvraw []byte) (*GoatEnv, error) {
 	return &genv, nil
 }
 
+// marshal takes a GoatEnv and tries to encode it into bytes
+func marshal(genv *GoatEnv) ([]byte, error) {
+	genvraw, err := goyaml.Marshal(genv)
+	if err != nil {
+		return nil, err
+	}
+	return genvraw, nil
+}
+
 type GoatEnv struct {
 	// ProjRoot is the absolute path to the project root in the current
 	// environment
-	ProjRoot string
+	ProjRoot string `yaml:"-"`
 
 	// Path is the path that the project will be using for its own internal
 	// import statements, and consequently what other projects depending on this
@@ -50,6 +59,18 @@ func NewGoatEnv(projroot string) (*GoatEnv, error) {
 
 	genv.ProjRoot = projroot
 	return genv, nil
+}
+
+// GenGoatEnv takes in the directory where a goat project file should
+// be created, scans the package in that directory for imports, and
+// generates a new GoatEnv based on what it finds.
+func GenGoatEnv(projroot string) (*GoatEnv, error) {
+	genv := GoatEnv{ProjRoot: projroot, Dependencies: make([]Dependency, 0)}
+	err := genv.DetectDependencies()
+	if err != nil {
+		return nil, err
+	}
+	return &genv, nil
 }
 
 // AbsDepDir is the absolute path to the dependency directory inside the goat
@@ -109,4 +130,18 @@ func (genv *GoatEnv) Setup() error {
 func (genv *GoatEnv) PrependToGoPath() error {
 	gopath, _ := syscall.Getenv("GOPATH")
 	return syscall.Setenv("GOPATH", genv.AbsDepDir()+":"+gopath)
+}
+
+func (genv *GoatEnv) WriteConf() error {
+	projfile := filepath.Join(genv.ProjRoot, PROJFILE)
+	b, err := marshal(genv)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(projfile, b, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

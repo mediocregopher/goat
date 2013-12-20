@@ -43,3 +43,26 @@ func Hg(depdir string, dep *Dependency) error {
 	return err
 
 }
+
+func HgInfo(path string) (string, string, error) {
+	origcwd, err := os.Getwd()
+	if err != nil {
+		return "", "", err
+	}
+
+	err = os.Chdir(path)
+	if err != nil {
+		return "", "", err
+	}
+	defer os.Chdir(origcwd)
+
+	ref, err := exec.TrimmedCmd("hg", "parent", "--template", "{node}")
+	if err != nil {
+		return "", "", err
+	}
+	url, err := exec.TrimmedCmd("hg", "paths", "default")
+	if err != nil {
+		return "", "", err
+	}
+	return url, ref, nil
+}

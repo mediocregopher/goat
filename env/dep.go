@@ -6,6 +6,7 @@ import (
 	. "github.com/mediocregopher/goat/common"
 	"github.com/mediocregopher/goat/env/deps"
 	"path/filepath"
+	"sort"
 )
 
 type typefunc func(string, *Dependency) error
@@ -86,4 +87,69 @@ func (genv *GoatEnv) FetchDependencies(depdir string) error {
 	}
 
 	return nil
+}
+
+// DetectDependencies looks at the package referenced by genv and
+// fills in the Dependency list based on what is found.
+func (genv *GoatEnv) DetectDependencies() error {
+	imports, err := getImports(genv.ProjRoot)
+	if err != nil {
+		return err
+	}
+	for _, imp := range imports {
+		genv.Dependencies = append(genv.Dependencies, Dependency{Location: imp})
+	}
+	return nil
+}
+
+// UpdateDependencies looks at the package referenced by genv and
+// updates the Dependency list based on what is found. Existing
+// dependencies are not overwritten.
+func (genv *GoatEnv) UpdateDependencies() error {
+	imports, err := getImportsMap(genv.ProjRoot)
+	if err != nil {
+		return err
+	}
+	for _, dep := range genv.Dependencies {
+		imports[dep.Location] = dep
+	}
+	deps := make(depList, 0, len(imports))
+	for _, dep := range imports {
+		deps = append(deps, dep)
+	}
+	sort.Sort(deps)
+	genv.Dependencies = deps
+	return nil
+}
+
+func (genv *GoatEnv) FreezeDependencies() error {
+	for i, dep := range genv.Dependencies {
+		if dep.Path == "" {
+			dep.Path = dep.Location
+		}
+		repoType, repoUrl, repoRef, err := FreezeImport(dep.Path)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		dep.Location = repoUrl
+		dep.Type = repoType.String()
+		dep.Reference = repoRef
+		genv.Dependencies[i] = dep
+	}
+	return nil
+}
+
+type depList []Dependency
+
+func (deps depList) Len() int {
+	return len(deps)
+}
+
+func (deps depList) Less(i, j int) bool {
+	return deps[i].Location < deps[j].Location
+}
+
+func (deps depList) Swap(i, j int) {
+	deps[i], deps[j] = deps[j], deps[i]
 }
