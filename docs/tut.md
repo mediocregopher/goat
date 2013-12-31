@@ -15,11 +15,9 @@ the project will look like at the end of this tutorial:
 ```
 /goatproject
     .go.yaml
-    /.goat
-        /deps (contains some stuff)
+    main.go
     /foo
         foo.go
-    main.go
 ```
 
 Not too complicated (I hope!)
@@ -52,7 +50,7 @@ current working directory is in `goatproject` or one of `goatproject`'s children
 your `GOPATH` will be set to (assuming you put your project in `/tmp` like me):
 
 ```
-/tmp/goatproject/.goat/deps
+/tmp/goatproject/.goat/deps:$OLDGOPATH
 ```
 
 This isn't too important, but it may be useful in the future so there ya go.
@@ -134,10 +132,6 @@ The `github.com/yourusername/goatproject` part corresponds to the `path` field
 in the `.go.yaml`, and when you use it goat does a bit of magic so that when go
 searches for that path it finds the project's root directory, even though the
 `goatproject` directory isn't in a folder called `github.com/yourusername`.
-
-In fact, the project's directory name could be anything at all. The only thing
-that matters is that the `path` field and any import statements used in the code
-match up.
 
 ## Action!
 
