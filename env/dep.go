@@ -6,7 +6,23 @@ import (
 	. "github.com/mediocregopher/goat/common"
 	"github.com/mediocregopher/goat/env/deps"
 	"path/filepath"
+	"sort"
 )
+
+// depList implements sort.Interface for lists of Dependencies.
+type depList []Dependency
+
+func (deps depList) Len() int {
+	return len(deps)
+}
+
+func (deps depList) Less(i, j int) bool {
+	return deps[i].Location < deps[j].Location
+}
+
+func (deps depList) Swap(i, j int) {
+	deps[i], deps[j] = deps[j], deps[i]
+}
 
 type typefunc func(string, *Dependency) error
 
@@ -85,5 +101,54 @@ func (genv *GoatEnv) FetchDependencies(depdir string) error {
 		header("-", "No dependencies listed in", genv.AbsProjFile())
 	}
 
+	return nil
+}
+
+// DetectDependencies looks at the package referenced by genv and
+// fills in the Dependency list based on what is found.
+func (genv *GoatEnv) DetectDependencies() error {
+	imports, err := getImports(genv.ProjRoot)
+	if err != nil {
+		return err
+	}
+	for _, imp := range imports {
+		genv.Dependencies = append(genv.Dependencies, Dependency{Location: imp})
+	}
+	return nil
+}
+
+// UpdateDependencies looks at the package referenced by genv and
+// updates the Dependency list based on what is found. Existing
+// dependencies are not overwritten.
+func (genv *GoatEnv) UpdateDependencies() error {
+	imports, err := getImportsMap(genv.ProjRoot)
+	if err != nil {
+		return err
+	}
+	for _, dep := range genv.Dependencies {
+		imports[dep.Location] = dep
+	}
+	genv.Dependencies = make(depList, 0, len(imports))
+	for _, dep := range imports {
+		genv.Dependencies = append(genv.Dependencies, dep)
+	}
+	sort.Sort(depList(genv.Dependencies))
+	return nil
+}
+
+func (genv *GoatEnv) FreezeDependencies() error {
+	combined := make(map[string]Dependency)
+	for _, dep := range genv.Dependencies {
+		frozenDep, err := FreezeImport(dep)
+		if err != nil {
+			fmt.Println(err)
+		}
+		combined[frozenDep.Location] = frozenDep
+	}
+	genv.Dependencies = make(depList, 0, len(combined))
+	for _, dep := range combined {
+		genv.Dependencies = append(genv.Dependencies, dep)
+	}
+	sort.Sort(depList(genv.Dependencies))
 	return nil
 }

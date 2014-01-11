@@ -8,14 +8,14 @@ type Dependency struct {
 	// Path is the path the dependency should be installed to. This should
 	// correspond to whatever the dependency expects to be imported as. For
 	// example: "code.google.com/p/protobuf". Default: Value of Location field
-	Path string `yaml:"path"`
+	Path string `yaml:"path,omitempty"`
 
 	// Type is what kind of project the dependency should be fetched as.
 	// Available options are: goget, git, hg. Default: goget.
-	Type string `yaml:"type"`
+	Type string `yaml:"type,omitempty"`
 
 	// Reference is only valueable for version-control Types (e.g. git). It can
 	// be any valid reference in that version control system (branch name, tag,
 	// commit hash). Default depends on the Type, git is "master", hg is "tip".
-	Reference string `yaml:"ref"`
+	Reference string `yaml:"ref,omitempty"`
 }
