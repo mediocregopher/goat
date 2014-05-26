@@ -86,7 +86,10 @@ func main() {
 			newargs := make([]string, len(args)+1)
 			copy(newargs[1:], args)
 			newargs[0] = "go"
-			exec.PipedCmd("/usr/bin/env", newargs...)
+			err := exec.PipedCmd("/usr/bin/env", newargs...)
+			if err != nil {
+				os.Exit(1)
+			}
 		}
 	}
 }
