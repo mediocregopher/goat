@@ -81,12 +81,18 @@ func main() {
 		printGhelp()
 	default:
 		if actualgo, ok := ActualGo(); ok {
-			exec.PipedCmd(actualgo, args...)
+			err := exec.PipedCmd(actualgo, args...)
+			if err != nil {
+				os.Exit(1)
+			}
 		} else {
 			newargs := make([]string, len(args)+1)
 			copy(newargs[1:], args)
 			newargs[0] = "go"
-			exec.PipedCmd("/usr/bin/env", newargs...)
+			err := exec.PipedCmd("/usr/bin/env", newargs...)
+			if err != nil {
+				os.Exit(1)
+			}
 		}
 	}
 }

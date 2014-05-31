@@ -78,5 +78,11 @@ func PipedCmd(cmdstr string, args ...string) error {
 	}
 
 	cmd.Wait()
+
+	// return an error if the command returned a non-success error code
+	if !cmd.ProcessState.Success() {
+		return errors.New("Command returned a non-success status code")
+	}
+
 	return nil
 }
