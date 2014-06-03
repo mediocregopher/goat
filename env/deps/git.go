@@ -6,15 +6,20 @@ import (
 	"github.com/mediocregopher/goat/exec"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func Git(depdir string, dep *Dependency) error {
 	localloc := filepath.Join(depdir, "src", dep.Path)
 
-	fmt.Println("git", "clone", dep.Location, localloc)
-	err := exec.PipedCmd("git", "clone", dep.Location, localloc)
-	if err != nil {
-		return err
+	if _, err := os.Stat(localloc); os.IsNotExist(err) {
+		fmt.Println("git", "clone", dep.Location, localloc)
+		err := exec.PipedCmd("git", "clone", dep.Location, localloc)
+		if err != nil {
+			return err
+		}
+	} else {
+		fmt.Println(localloc, "exists")
 	}
 
 	origcwd, err := os.Getwd()
@@ -37,15 +42,42 @@ func Git(depdir string, dep *Dependency) error {
 	if dep.Reference == "" {
 		dep.Reference = "master"
 	}
+	if exists, err := originBranchExists(dep.Reference); err != nil {
+		return err
+	} else if exists {
+		dep.Reference = "origin/" + dep.Reference
+	}
 	fmt.Println("git", "checkout", dep.Reference)
-	err = exec.PipedCmd("git", "checkout", dep.Reference)
+	stdout, stderr, err := exec.TrimmedCmd("git", "checkout", dep.Reference)
 	if err != nil {
 		return err
 	}
+	if stdout != "" {
+		fmt.Println(stdout)
+	}
+	// Moving to a 'detached HEAD' state causes git to output a huge explanation
+	// to stderr.  We only want the last line.
+	lines := strings.Split(stderr, "\n")
+	fmt.Println(lines[len(lines)-1])
 
 	fmt.Println("git", "clean", "-f", "-d")
 	err = exec.PipedCmd("git", "clean", "-f", "-d")
 
 	return err
 
+}
+
+// If 'origin/branch' exists, return true.
+func originBranchExists(branch string) (bool, error) {
+	branches, _, err := exec.TrimmedCmd("git", "branch", "--remote")
+	if err != nil {
+		return false, err
+	}
+	for _, b := range strings.Split(branches, "\n") {
+		b := strings.TrimSpace(b)
+		if strings.HasSuffix(b, "origin/"+branch) {
+			return true, nil
+		}
+	}
+	return false, nil
 }

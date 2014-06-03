@@ -9,49 +9,40 @@ import (
 	"strings"
 )
 
-var trimstr = "\n\t\b\r "
-
 // TrimmedCmd returns a command's output on stdout and stderr as
 // a string and error object. Before returning both stdout and stderr
 // have whitespace trimmed off both ends. Stderr will be nil if it was
 // empty
-func TrimmedCmd(cmdstr string, args ...string) (string, error) {
+func TrimmedCmd(cmdstr string, args ...string) (string, string, error) {
 	cmd := exec.Command(cmdstr, args...)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	err = cmd.Start()
-	if err != nil {
-		return "", err
+	if err = cmd.Start(); err != nil {
+		return "", "", err
 	}
 
 	bout, err := ioutil.ReadAll(stdout)
-	strout := strings.Trim(string(bout), trimstr)
+	strout := strings.TrimSpace(string(bout))
 	if err != nil {
-		return strout, err
+		return strout, "", err
 	}
 
 	berr, err := ioutil.ReadAll(stderr)
+	strerr := strings.TrimSpace(string(berr))
 	if err != nil {
-		return strout, err
+		return strout, strerr, err
 	}
 
-	cmd.Wait()
-
-	if len(berr) == 0 {
-		return strout, nil
-	}
-
-	strerr := strings.Trim(string(berr), trimstr)
-	return strout, errors.New(strerr)
+	return strout, strerr, cmd.Wait()
 }
 
 // PipedCmd pipes a command's out/err to this process', and returns
