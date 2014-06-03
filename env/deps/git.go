@@ -48,10 +48,17 @@ func Git(depdir string, dep *Dependency) error {
 		dep.Reference = "origin/" + dep.Reference
 	}
 	fmt.Println("git", "checkout", dep.Reference)
-	err = exec.PipedCmd("git", "checkout", dep.Reference)
+	stdout, stderr, err := exec.TrimmedCmd("git", "checkout", dep.Reference)
 	if err != nil {
 		return err
 	}
+	if stdout != "" {
+		fmt.Println(stdout)
+	}
+	// Moving to a 'detached HEAD' state causes git to output a huge explanation
+	// to stderr.  We only want the last line.
+	lines := strings.Split(stderr, "\n")
+	fmt.Println(lines[len(lines)-1])
 
 	fmt.Println("git", "clean", "-f", "-d")
 	err = exec.PipedCmd("git", "clean", "-f", "-d")
@@ -62,7 +69,7 @@ func Git(depdir string, dep *Dependency) error {
 
 // If 'origin/branch' exists, return true.
 func originBranchExists(branch string) (bool, error) {
-	branches, err := exec.TrimmedCmd("git", "branch", "--remote")
+	branches, _, err := exec.TrimmedCmd("git", "branch", "--remote")
 	if err != nil {
 		return false, err
 	}
