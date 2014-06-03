@@ -11,10 +11,14 @@ import (
 func Hg(depdir string, dep *Dependency) error {
 	localloc := filepath.Join(depdir, "src", dep.Path)
 
-	fmt.Println("hg", "clone", dep.Location, localloc)
-	err := exec.PipedCmd("hg", "clone", dep.Location, localloc)
-	if err != nil {
-		return err
+	if _, err := os.Stat(localloc); os.IsNotExist(err) {
+		fmt.Println("hg", "clone", dep.Location, localloc)
+		err := exec.PipedCmd("hg", "clone", dep.Location, localloc)
+		if err != nil {
+			return err
+		}
+	} else {
+		fmt.Println(localloc, "exists")
 	}
 
 	origcwd, err := os.Getwd()
