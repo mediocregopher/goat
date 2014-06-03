@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-var trimstr = "\n\t\b\r "
-
 // TrimmedCmd returns a command's output on stdout and stderr as
 // a string and error object. Before returning both stdout and stderr
 // have whitespace trimmed off both ends. Stderr will be nil if it was
@@ -34,7 +32,7 @@ func TrimmedCmd(cmdstr string, args ...string) (string, error) {
 	}
 
 	bout, err := ioutil.ReadAll(stdout)
-	strout := strings.Trim(string(bout), trimstr)
+	strout := strings.TrimSpace(string(bout))
 	if err != nil {
 		return strout, err
 	}
@@ -50,7 +48,7 @@ func TrimmedCmd(cmdstr string, args ...string) (string, error) {
 		return strout, nil
 	}
 
-	strerr := strings.Trim(string(berr), trimstr)
+	strerr := strings.TrimSpace(string(berr))
 	return strout, errors.New(strerr)
 }
 
