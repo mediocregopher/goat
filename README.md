@@ -2,58 +2,88 @@
 
        _))
       /* \     _~
-      `;'\\__-' \_     A simple go dependency manager and project isolator
+      `;'\\__-' \_     A simple go dependency manager
          | )  _ \ \
         / / ``   w w
        w w
 
-Goat handles recursive, versioned, dependency management for go projects in an
-unobtrusive way. Goat also allows projects to be located anywhere on the file
-system, unattached to a Go workspace. Best of all, to switch to using goat you
-won't have to change a single line of code.
+* Unobtrusive dependency management
+* Allows projects to be located anywhere, regardless of GOPATH
+* Existing projects can be switched to goat without changing any code
 
-# The problem
+See the [introduction][intro] for more details.
 
-There are two problems that goat aims to solve:
+# Usage
 
-* `go get` does not allow for specifying versions of a library.
+**Pulling dependencies for an existing project:**
 
-* `go get` does not have an easy of way of sandboxing your project's development
-  environment. You can either muck up your global environment with dependencies
-  or mess with your `GOPATH` everytime you want to develop for that project.
-  Others that want to work on your project will have to do the same.
+```bash
+cd project/
+goat deps
+```
 
-* Other dependency managers are strange and have weird command line arguments
-  that I don't feel like learning.
+That's it. You just learned all the command-line stuff for goat.
 
-# The solution
+**Creating a new project:**
 
-* The root of a goat project has a `.go.yaml` file which specifies a
-  dependency's location, name, and version control reference if applicable. It
-  is formatted using super-simple yaml objects, each having at most four fields.
+```bash
+mkdir newproject # Can be anywhere on the filesystem, regardless of GOPATH
+cd newproject
+vim .go.yaml
+```
 
-* All dependencies are placed in a `.goat/deps` directory at the root of your
-  project.  goat will automatically look for a `.go.yaml` in your current
-  working directory or one of its parents, and call that the project root. For
-  the rest of the command's duration your GOPATH will have
-  `<projroot>/.goat/deps` prepended to it. This has many useful properties, most
-  notably that your dependencies are sandboxed inside your code, but are still
-  usable exactly as they would have been if they were global.
+in .go.yaml put:
 
-* Goat is a wrapper around the go command line utility. It adds one new command,
-  all other commands are passed straight through to the normal go binary. This
-  command is `goat deps`, and it retrieves all dependencies listed in your
-  `.go.yaml` and puts them into a folder called `.goat/deps` in your project. If
-  any of those dependencies have `.go.yaml` files then those are processed and
-  put in your project's `.goat/deps` folder as well (this is done recursively).
+```yaml
+---
+path: github.com/user/newproject
+```
+
+**Adding a dependency to a project:**
+
+Change .go.yaml to read:
+
+```yaml
+---
+path: github.com/user/newproject
+deps:
+    - loc: launchpad.net/goyaml # the same path you would use for go get
+```
+
+**Adding a dependency with a specific version:**
+
+Change .go.yaml to read:
+
+```yaml
+---
+path: github.com/user/newproject
+deps:
+    - loc: launchpad.net/goyaml # the same path you would use for go get
+
+    - loc: https://github.com/mediocregopher/flagconfig.git
+      type: git
+      ref: v0.4.2 # A tag in this case, could be commit hash or branch name
+      path: github.com/mediocregopher/flagconfig
+```
+
+Run `goat deps` to automatically fetch both of your dependencies into your
+project. Running `goat build` or `goat run` within your project will
+automatically use any dependencies goat has fetched.
+
+# More Usage
+
+See the [tutorial][tutorial] for a basic use case for goat with more explanation
+and a real project. After that check out the [.go.yaml file][projfile] for more
+details on what kind of features goat has for dependency management. There are
+also some [special features][special] that don't really fit in anywhere else
+that might be useful to know about.
 
 # Installation
 
 To use goat you can either get a pre-compiled binary or build it yourself. Once
-you get the binary I recommend renaming aliasing it as `go` (`alias go=goat`),
-so that `goat` gets used whenever you use the `go` utility. Don't worry, unless
-you are in a directory tree with a `.go.yaml` file or use one of goat's special
-commands nothing will be different.
+you get the binary I recommend renaming it as `go` (`alias go=goat`),
+so that `goat` gets used whenever you use the `go` utility. Don't worry, all
+`go` commands inside and outside of goat projects will behave the same way.
 
 ## Pre-built
 
@@ -72,17 +102,11 @@ make
 
 The binaries will be found in the `bin` directory.
 
-# Usage
-
-See the [tutorial][tutorial] for a basic use case for goat. After that check out
-the [.go.yaml file][projfile] for more details on what kind of features goat has
-for dependency management. There are also some [special features][special] that
-don't really fit in anywhere else that might be useful to know about.
-
 # Copyrights
 
 Goat ASCII Art (c) 1997 ejm, Creative Commons
 
+[intro]: /docs/introduction.md
 [tutorial]: /docs/tut.md
 [projfile]: /docs/projfile.md
 [special]: /docs/special.md
