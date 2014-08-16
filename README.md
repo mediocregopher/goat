@@ -47,7 +47,7 @@ Change .go.yaml to read:
 ---
 path: github.com/user/newproject
 deps:
-    - loc: launchpad.net/goyaml # the same path you would use for go get
+    - loc: gopkg.in/yaml.v1 # the same path you would use for go get
 ```
 
 **Adding a dependency with a specific version:**
@@ -58,7 +58,7 @@ Change .go.yaml to read:
 ---
 path: github.com/user/newproject
 deps:
-    - loc: launchpad.net/goyaml # the same path you would use for go get
+    - loc: gopkg.in/yaml.v1 # the same path you would use for go get
 
     - loc: https://github.com/mediocregopher/flagconfig.git
       type: git

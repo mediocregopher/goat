@@ -26,7 +26,7 @@ bin:
 	mkdir bin
 
 deps: $(GOATLOOPBACK)
-	$(GOPATH) go get launchpad.net/goyaml
+	$(GOPATH) go get gopkg.in/yaml.v1
 
 $(GOATLOOPBACK):
 	mkdir -p $(GOATLOOPBACK)/..
