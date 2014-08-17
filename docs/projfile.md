@@ -18,7 +18,7 @@ Here's a basic `.go.yaml`:
 path: github.com/username/myproject
 deps:
   - loc: code.google.com/p/go.example/newmath
-    type: goget
+    type: get
 
   - loc: https://github.com:mediocregopher/goat.git
     type: git
@@ -59,15 +59,15 @@ your project. This will be passed into whatever dependency fetcher you are using
 
 ### type
 
-By default this field is `goget`, but currently `git` and `hg` are also
+By default this field is `get`, but currently `git` and `hg` are also
 supported. This tells goat how to fetch the dependency. For example if `type` is
-set to `goget` then `go get <path>` is used, while if it's `git` then `git clone
+set to `get` then `go get <path>` is used, while if it's `git` then `git clone
 <path>` will be used.
 
 ### ref
 
 The option is only valid for `type`s that have some kind of version reference
-system (for example `git` does, `goget` doesn't). Here are the defaults for the
+system (for example `git` does, `get` doesn't). Here are the defaults for the
 supported types:
 
 * git: `master`
@@ -77,7 +77,7 @@ supported types:
 
 The actual directory structure the dependency will be put into inside the `depdir`
 folder. By default this is set to whatever `loc` is set to, which works for
-`goget` dependencies but not so well for others where the `loc` is an actual url
+`get` dependencies but not so well for others where the `loc` is an actual url
 (like `git`). In effect, `path` is the string you want to use for importing this
 dependency inside your project.
 
