@@ -12,7 +12,7 @@ type typefunc func(string, *Dependency) error
 
 var typemap = map[string]typefunc{
 	"":    deps.GoGet,
-	"get": deps.GoGet,
+	"goget": deps.GoGet,
 	"git": deps.Git,
 	"hg":  deps.Hg,
 }
