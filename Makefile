@@ -1,4 +1,4 @@
-DEPSDIR= $(CURDIR)/.goat/deps
+DEPSDIR= .goat/deps
 GOPATH= GOPATH=$(DEPSDIR)
 GOATLOOPBACK= $(DEPSDIR)/src/github.com/mediocregopher
 
@@ -29,5 +29,5 @@ deps: $(GOATLOOPBACK)
 	$(GOPATH) go get gopkg.in/yaml.v1
 
 $(GOATLOOPBACK):
-	mkdir -p $(GOATLOOPBACK)/..
-	ln -s $(CURDIR) $(GOATLOOPBACK)
+	mkdir -p $(GOATLOOPBACK)
+	(cd $(GOATLOOPBACK) && ln -s ../../../../.. goat)

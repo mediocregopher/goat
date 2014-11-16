@@ -95,9 +95,16 @@ func (genv *GoatEnv) Setup() error {
 		loopbackPath := filepath.Join(depdir, "src", genv.Path)
 		if !pathExists(loopbackPath) {
 			loopbackDir := filepath.Dir(loopbackPath)
+			// Rel returns a relative path from a -> b, we want to loop from the
+			// loopbackPath in the dep sub-directory to the project root using a
+			// symlink
+			linkTo, err := filepath.Rel(loopbackDir, genv.ProjRoot)
+			if err != nil {
+				return err
+			}
 			if err = os.MkdirAll(loopbackDir, 0755); err != nil {
 				return err
-			} else if err = os.Symlink(genv.ProjRoot, loopbackPath); err != nil {
+			} else if err = os.Symlink(linkTo, loopbackPath); err != nil {
 				return err
 			}
 		}
