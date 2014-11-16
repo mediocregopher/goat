@@ -9,6 +9,9 @@ import (
 	"syscall"
 )
 
+// Optionally set during go build to be output in the help block
+var releaseVersion string
+
 func fatal(err error) {
 	fmt.Println(err)
 	os.Exit(1)
@@ -34,7 +37,10 @@ The commands are:
 
 All other commands are passed through to the go binary on your system. Try '%s
 help' for its available commands
-`, os.Args[0], os.Args[0])
+
+Goat release %s
+
+`, os.Args[0], os.Args[0], releaseVersion)
 	os.Exit(0)
 }
 

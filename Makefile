@@ -12,7 +12,7 @@ release: bin rel deps
 	for platform in darwin freebsd linux windows; do \
 		for arch in 386 amd64; do \
 			echo $$platform $$arch; \
-			$(GOPATH) GOOS=$$platform GOARCH=$$arch go build -o bin/goat-$$version/goat_"$$platform"_"$$arch" goat.go; \
+			$(GOPATH) GOOS=$$platform GOARCH=$$arch go build -ldflags "-X main.releaseVersion '$$version'" -o bin/goat-$$version/goat_"$$platform"_"$$arch" goat.go; \
 		done; \
 	done; \
 	cd bin; \
