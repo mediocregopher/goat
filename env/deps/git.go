@@ -69,7 +69,8 @@ func Git(depdir string, dep *Dependency) error {
 
 // If 'origin/branch' exists, return true.
 func originBranchExists(branch string) (bool, error) {
-	branches, _, err := exec.TrimmedCmd("git", "branch", "--remote")
+	fmt.Println("git", "branch", "-r")
+	branches, _, err := exec.TrimmedCmd("git", "branch", "-r")
 	if err != nil {
 		return false, err
 	}
