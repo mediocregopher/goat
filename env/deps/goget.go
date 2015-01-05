@@ -2,6 +2,7 @@ package deps
 
 import (
 	"fmt"
+
 	. "github.com/mediocregopher/goat/common"
 	"github.com/mediocregopher/goat/exec"
 )

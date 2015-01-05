@@ -1,12 +1,12 @@
 package env
 
 import (
-	. "github.com/mediocregopher/goat/common"
 	"io/ioutil"
-	"gopkg.in/yaml.v1"
 	"os"
 	"path/filepath"
 	"syscall"
+
+	. "github.com/mediocregopher/goat/common"
 )
 
 var PROJFILE = ".go.yaml"

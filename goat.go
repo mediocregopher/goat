@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/mediocregopher/goat/env"
-	"github.com/mediocregopher/goat/exec"
 	"os"
 	"syscall"
+
+	"github.com/mediocregopher/goat/env"
+	"github.com/mediocregopher/goat/exec"
 )
 
 // Optionally set during go build to be output in the help block

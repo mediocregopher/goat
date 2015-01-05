@@ -2,10 +2,11 @@ package deps
 
 import (
 	"fmt"
-	. "github.com/mediocregopher/goat/common"
-	"github.com/mediocregopher/goat/exec"
 	"os"
 	"path/filepath"
+
+	. "github.com/mediocregopher/goat/common"
+	"github.com/mediocregopher/goat/exec"
 )
 
 func Hg(depdir string, dep *Dependency) error {
