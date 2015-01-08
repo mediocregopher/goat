@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	. "github.com/mediocregopher/goat/common"
+	"gopkg.in/yaml.v1"
 )
 
 var PROJFILE = ".go.yaml"
