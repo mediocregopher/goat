@@ -1,3 +1,9 @@
+# THIS PROJECT HAS MOVED
+
+See [https://github.com/openbohemians/goat](https://github.com/openbohemians/goat)
+for the new location where it will be actively maintained. Thanks to @trans for
+picking up my slack!
+
 # goat
 
        _))
